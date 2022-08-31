@@ -3,10 +3,13 @@ import { AppService } from './app.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+    constructor(private readonly appService: AppService) {}
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
-  }
+    @Get('/:userId')
+    pointStatus(): any {
+        return {
+            good_point: 0,
+            bad_point: 33
+        };
+    }
 }

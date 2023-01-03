@@ -1,0 +1,19 @@
+spring:
+  profiles:
+    active: ${PROFILE}
+  main:
+    web-application-type: reactive
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+    date-format: yyyy-MM-dd'T'HH:mm:ss
+    time-zone: Asia/Seoul
+  application:
+    name: v1-point-service
+  config:
+    import: optional:configserver:https://api.xquare.app/cloud-config/
+  cloud:
+    config:
+      username: ${CLOUD_CONFIG_USERNAME}
+      password: ${CLOUD_CONFIG_PASSWORD}
+server:
+  shutdown: graceful

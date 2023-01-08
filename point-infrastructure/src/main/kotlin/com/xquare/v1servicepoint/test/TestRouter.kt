@@ -14,7 +14,7 @@ class TestRouter(
     fun pointBaseRouter(testHandler: TestHandler) = coRouter {
         "/points".nest {
             contentType(MediaType.APPLICATION_JSON)
-            GET("", testHandler::testfun)
+            GET("/userId", testHandler::testfun)
         }
 
     }

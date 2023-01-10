@@ -25,6 +25,8 @@ dependencies {
     implementation(Dependencies.JACKSON)
     implementation(Dependencies.SPRING_SECURITY)
     implementation(Dependencies.CLOUD_CONFIG)
+    implementation(Dependencies.UUID_V7)
+    implementation(Dependencies.REACTIVE_REDIS)
 
     implementation(project(":point-domain"))
 }

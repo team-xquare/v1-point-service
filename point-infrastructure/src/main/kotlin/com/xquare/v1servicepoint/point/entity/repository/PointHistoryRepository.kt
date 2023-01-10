@@ -6,4 +6,4 @@ import org.springframework.stereotype.Repository
 import java.util.UUID
 
 @Repository
-interface PointHistory : CoroutineCrudRepository<PointHistoryEntity, UUID>
+interface PointHistoryRepository : CoroutineCrudRepository<PointHistoryEntity, UUID>

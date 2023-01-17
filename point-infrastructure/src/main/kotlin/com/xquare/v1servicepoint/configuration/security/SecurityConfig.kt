@@ -21,5 +21,4 @@ class SecurityConfig {
             .anyExchange().permitAll()
             .and().build()
     }
-
 }

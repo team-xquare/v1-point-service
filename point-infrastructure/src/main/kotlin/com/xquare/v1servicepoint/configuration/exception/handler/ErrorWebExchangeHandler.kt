@@ -48,7 +48,7 @@ class ErrorWebExchangeHandler(
     private fun handleError(request: ServerRequest): Mono<ServerResponse> =
         when (val throwable = super.getError(request)) {
             is BaseException -> throwable.toErrorResponse()
-            is ServerWebInputException, is NoSuchElementException -> BadRequestException("Missing Request Body").toErrorResponse()
+            is ServerWebInputException, is NoSuchElementException -> BadRequestException(BadRequestException.BAD_REQUEST_EXCEPTION).toErrorResponse()
             is ResponseStatusException -> RequestHandlerNotFoundException("${request.method()} ${request.path()} Handler Not Found").toErrorResponse()
             is PersistenceException -> throwable.handleDatabaseError()
             else -> InternalServerError(InternalServerError.UNEXPECTED_EXCEPTION).toErrorResponse()

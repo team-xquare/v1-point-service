@@ -5,5 +5,5 @@ import com.xquare.v1servicepoint.point.entity.PointHistoryEntity
 
 interface PointHistoryMapper {
     fun pointHistoryEntityToDomain(pointHistoryEntity: PointHistoryEntity): PointHistory
-    fun pointHistoryDomainToEntity(pointHistory: PointHistory): PointHistoryEntity
+    suspend fun pointHistoryDomainToEntity(pointHistory: PointHistory): PointHistoryEntity
 }

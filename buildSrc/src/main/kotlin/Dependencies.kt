@@ -46,4 +46,7 @@ object Dependencies {
 
     // cloud config
     const val CLOUD_CONFIG = "org.springframework.cloud:spring-cloud-config-client"
+
+    // configuration processor
+    const val CONFIGURATION_PROCESSOR = "org.springframework.boot:spring-boot-configuration-processor"
 }

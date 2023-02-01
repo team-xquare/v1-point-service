@@ -28,4 +28,3 @@ class PointStatusRepository(
         }.singleResult()
     }
 }
-

@@ -34,11 +34,11 @@ class QueryBuilderConfig {
     @Bean
     fun queryFactory(
         sessionFactory: Mutiny.SessionFactory,
-        subqueryCreator: SubqueryCreator
+        subqueryCreator: SubqueryCreator,
     ): HibernateMutinyReactiveQueryFactory {
         return HibernateMutinyReactiveQueryFactory(
             sessionFactory = sessionFactory,
-            subqueryCreator = subqueryCreator
+            subqueryCreator = subqueryCreator,
         )
     }
 }

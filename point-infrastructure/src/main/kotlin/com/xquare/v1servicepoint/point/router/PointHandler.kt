@@ -10,7 +10,7 @@ import java.util.*
 
 @Component
 class PointHandler(
-    private val pointApi: PointApi
+    private val pointApi: PointApi,
 ) {
     suspend fun queryUserPointStatus(serverRequest: ServerRequest): ServerResponse {
         val userId = serverRequest.headers().firstHeader("Request-User-Id")

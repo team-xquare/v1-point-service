@@ -11,7 +11,7 @@ import java.util.UUID
 
 @Repository
 class PointHistoryRepository(
-    private val reactiveQueryFactory: HibernateMutinyReactiveQueryFactory
+    private val reactiveQueryFactory: HibernateMutinyReactiveQueryFactory,
 ) : PointHistoryRepositorySpi {
     suspend fun findByPointId(pointId: UUID): PointEntity {
         return reactiveQueryFactory.withFactory { _, reactiveQueryFactory ->

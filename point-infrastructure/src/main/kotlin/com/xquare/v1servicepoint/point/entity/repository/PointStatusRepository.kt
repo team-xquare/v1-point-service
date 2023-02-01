@@ -11,8 +11,7 @@ import java.util.*
 
 @Repository
 class PointStatusRepository(
-    private val reactiveQueryFactory: HibernateMutinyReactiveQueryFactory
-
+    private val reactiveQueryFactory: HibernateMutinyReactiveQueryFactory,
 ) : PointStatusRepositorySpi {
     override suspend fun findByUserId(userId: UUID): PointStatus? {
         return reactiveQueryFactory.withFactory { _, reactiveQueryFactory ->

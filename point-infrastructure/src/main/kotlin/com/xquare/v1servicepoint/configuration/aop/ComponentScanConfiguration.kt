@@ -16,9 +16,9 @@ import org.springframework.context.annotation.FilterType
             type = FilterType.ANNOTATION,
             classes = [
                 UseCase::class,
-                SagaStep::class
-            ]
-        )
-    ]
+                SagaStep::class,
+            ],
+        ),
+    ],
 )
 class ComponentScanConfiguration

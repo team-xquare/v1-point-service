@@ -16,5 +16,5 @@ data class DatasourceProperties(
     val formatSql: Boolean,
     val highlightSql: Boolean,
     val ddlAuto: String,
-    val poolSize: Int
+    val poolSize: Int,
 )

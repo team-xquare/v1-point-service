@@ -5,13 +5,13 @@ import com.xquare.v1servicepoint.point.entity.PointHistoryEntity
 import com.xquare.v1servicepoint.point.entity.repository.PointHistoryRepository
 
 class PointHistoryMapperImpl(
-    private val pointHistoryRepository: PointHistoryRepository
+    private val pointHistoryRepository: PointHistoryRepository,
 ) : PointHistoryMapper {
     override fun pointHistoryEntityToDomain(pointHistoryEntity: PointHistoryEntity): PointHistory {
         return PointHistory(
             id = pointHistoryEntity.id,
             pointId = pointHistoryEntity.point.id,
-            userId = pointHistoryEntity.userId
+            userId = pointHistoryEntity.userId,
         )
     }
 
@@ -21,7 +21,7 @@ class PointHistoryMapperImpl(
         return PointHistoryEntity(
             id = pointHistory.id,
             point = point,
-            userId = pointHistory.userId
+            userId = pointHistory.userId,
         )
     }
 }

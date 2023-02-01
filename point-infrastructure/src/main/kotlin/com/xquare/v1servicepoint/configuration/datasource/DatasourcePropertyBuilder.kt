@@ -4,7 +4,7 @@ import org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
 import org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
 
 class DatasourcePropertyBuilder(
-    private val datasourceProperties: DatasourceProperties
+    private val datasourceProperties: DatasourceProperties,
 ) {
 
     companion object {

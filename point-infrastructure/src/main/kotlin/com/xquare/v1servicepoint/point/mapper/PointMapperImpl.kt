@@ -10,7 +10,7 @@ class PointMapperImpl : PointMapper {
             id = pointEntity.id,
             reason = pointEntity.reason,
             point = pointEntity.point,
-            type = pointEntity.type
+            type = pointEntity.type,
         )
     }
 
@@ -19,7 +19,7 @@ class PointMapperImpl : PointMapper {
             id = point.id,
             reason = point.reason,
             point = point.point,
-            type = point.type
+            type = point.type,
         )
     }
 }

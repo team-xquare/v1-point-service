@@ -18,7 +18,7 @@ class PointApiImpl(
 
         return PointStatusResponse(
             goodPoint = getUserPointStatus.goodPoint,
-            badPoint = getUserPointStatus.badPoint
+            badPoint = getUserPointStatus.badPoint,
         )
     }
 }

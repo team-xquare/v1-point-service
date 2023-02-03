@@ -11,7 +11,7 @@ class PointStatusMapperImpl : PointStatusMapper {
             goodPoint = pointStatusEntity.goodPoint,
             badPoint = pointStatusEntity.badPoint,
             penaltyLevel = pointStatusEntity.penaltyLevel,
-            isPenaltyRequired = pointStatusEntity.isPenaltyRequired
+            isPenaltyRequired = pointStatusEntity.isPenaltyRequired,
         )
     }
 
@@ -21,7 +21,7 @@ class PointStatusMapperImpl : PointStatusMapper {
             goodPoint = pointStatus.badPoint,
             badPoint = pointStatus.badPoint,
             penaltyLevel = pointStatus.penaltyLevel,
-            isPenaltyRequired = pointStatus.isPenaltyRequired
+            isPenaltyRequired = pointStatus.isPenaltyRequired,
         )
     }
 }

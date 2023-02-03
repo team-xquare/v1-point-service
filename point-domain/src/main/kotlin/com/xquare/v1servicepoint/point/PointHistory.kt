@@ -1,7 +1,7 @@
 package com.xquare.v1servicepoint.point
 
 import com.xquare.v1servicepoint.annotation.Aggregate
-import java.util.*
+import java.util.UUID
 
 @Aggregate
 class PointHistory(

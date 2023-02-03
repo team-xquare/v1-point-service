@@ -1,7 +1,7 @@
 package com.xquare.v1servicepoint.point.entity
 
 import com.github.f4b6a3.uuid.UuidCreator
-import java.util.*
+import java.util.UUID
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.FetchType

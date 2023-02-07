@@ -24,7 +24,7 @@ class PointHistoryRepository(
                 id = UuidCreator.getTimeOrderedEpoch(),
                 date = LocalDate.now(),
                 userId = userId,
-                pointId = pointId
+                pointId = pointId,
             ),
         )
 

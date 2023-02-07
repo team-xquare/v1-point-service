@@ -7,7 +7,7 @@ import com.linecorp.kotlinjdsl.selectQuery
 import com.xquare.v1servicepoint.point.Point
 import com.xquare.v1servicepoint.point.spi.PointSpi
 import org.springframework.stereotype.Repository
-import java.util.*
+import java.util.UUID
 
 @Repository
 class PointRepository(

@@ -6,5 +6,4 @@ import java.util.UUID
 @Spi
 interface PointHistoryRepositorySpi {
     suspend fun saveUserPoint(userId: UUID, pointId: UUID)
-
 }

@@ -1,11 +1,7 @@
 package com.xquare.v1servicepoint.point.entity.repository
 
 import com.github.f4b6a3.uuid.UuidCreator
-import com.linecorp.kotlinjdsl.ReactiveQueryFactory
 import com.linecorp.kotlinjdsl.query.HibernateMutinyReactiveQueryFactory
-import com.linecorp.kotlinjdsl.querydsl.expression.col
-import com.linecorp.kotlinjdsl.selectQuery
-import com.xquare.v1servicepoint.point.Point
 import com.xquare.v1servicepoint.point.PointHistory
 import com.xquare.v1servicepoint.point.entity.PointHistoryEntity
 import com.xquare.v1servicepoint.point.mapper.PointHistoryMapper
@@ -14,7 +10,7 @@ import io.smallrye.mutiny.coroutines.awaitSuspending
 import org.hibernate.reactive.mutiny.Mutiny
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
-import java.util.*
+import java.util.UUID
 
 @Repository
 class PointHistoryRepository(
@@ -39,5 +35,4 @@ class PointHistoryRepository(
 
     private suspend fun Mutiny.Session.persistPointHistoryEntityConcurrently(pointHistoryEntity: PointHistoryEntity) =
         this@persistPointHistoryEntityConcurrently.persist(pointHistoryEntity).awaitSuspending()
-
 }

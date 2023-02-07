@@ -11,12 +11,10 @@ import com.xquare.v1servicepoint.point.entity.PointHistoryEntity
 import com.xquare.v1servicepoint.point.mapper.PointHistoryMapper
 import com.xquare.v1servicepoint.point.spi.PointHistorySpi
 import io.smallrye.mutiny.coroutines.awaitSuspending
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import org.hibernate.reactive.mutiny.Mutiny
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
-import java.util.UUID
+import java.util.*
 
 @Repository
 class PointHistoryRepository(

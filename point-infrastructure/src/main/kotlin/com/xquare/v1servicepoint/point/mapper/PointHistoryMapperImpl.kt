@@ -3,13 +3,17 @@ package com.xquare.v1servicepoint.point.mapper
 import com.xquare.v1servicepoint.point.PointHistory
 import com.xquare.v1servicepoint.point.entity.PointHistoryEntity
 import com.xquare.v1servicepoint.point.entity.repository.PointHistoryRepository
+import org.springframework.stereotype.Component
 
+@Component
 class PointHistoryMapperImpl(
     private val pointHistoryRepository: PointHistoryRepository,
+    private val pointMapper: PointMapper
 ) : PointHistoryMapper {
     override fun pointHistoryEntityToDomain(pointHistoryEntity: PointHistoryEntity): PointHistory {
         return PointHistory(
             id = pointHistoryEntity.id,
+            date = pointHistoryEntity.date,
             pointId = pointHistoryEntity.point.id,
             userId = pointHistoryEntity.userId,
         )
@@ -20,7 +24,8 @@ class PointHistoryMapperImpl(
 
         return PointHistoryEntity(
             id = pointHistory.id,
-            point = point,
+            date = pointHistory.date,
+            point = pointMapper.pointDomainToEntity(point),
             userId = pointHistory.userId,
         )
     }

@@ -6,17 +6,19 @@ import com.xquare.v1servicepoint.point.api.dto.request.DomainGivePointUserReques
 import com.xquare.v1servicepoint.point.exception.PointNotFoundException
 import com.xquare.v1servicepoint.point.exception.UserNotFoundException
 import com.xquare.v1servicepoint.point.spi.PointHistorySpi
+import com.xquare.v1servicepoint.point.spi.PointSpi
 import com.xquare.v1servicepoint.point.spi.PointStatusSpi
 import java.util.UUID
 
 @UseCase
 class PointHistoryApiImpl(
     private val pointHistorySpi: PointHistorySpi,
+    private val pointSpi: PointSpi,
     private val pointStatusSpi: PointStatusSpi,
 ) : PointHistoryApi {
 
     override suspend fun saveUserPoint(userId: UUID, givePointUserRequest: DomainGivePointUserRequest) {
-        val getPointByPointId = pointHistorySpi.findByPointId(givePointUserRequest.pointId)
+        val getPointByPointId = pointSpi.findByPointId(givePointUserRequest.pointId)
             ?: throw PointNotFoundException(PointNotFoundException.POINT_NOT_FOUND)
 
         val pointStatus = pointStatusSpi.findByUserId(userId)

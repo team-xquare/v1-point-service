@@ -1,6 +1,10 @@
 package com.xquare.v1servicepoint.point.spi
 
 import com.xquare.v1servicepoint.annotation.Spi
+import com.xquare.v1servicepoint.point.Point
+import java.util.*
 
 @Spi
-interface PointRepositorySpi
+interface PointRepositorySpi {
+    suspend fun findByPointId(pointId: UUID): Point?
+}

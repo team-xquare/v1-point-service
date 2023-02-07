@@ -40,17 +40,4 @@ class PointHistoryRepository(
     private suspend fun Mutiny.Session.persistPointHistoryEntityConcurrently(pointHistoryEntity: PointHistoryEntity) =
         this@persistPointHistoryEntityConcurrently.persist(pointHistoryEntity).awaitSuspending()
 
-    override suspend fun findByPointId(pointId: UUID): Point? {
-        return reactiveQueryFactory.withFactory { _, reactiveQueryFactory ->
-            reactiveQueryFactory.findByIdIn(pointId)
-        }
-    }
-
-    private suspend fun ReactiveQueryFactory.findByIdIn(id: UUID): Point { // 코루틴 동작 안하도록 변경해야 mapper도 변경 할 수 있음
-        return this.selectQuery<Point> {
-            select(entity(Point::class))
-            from(entity(Point::class))
-            where(col(Point::id).`in`(id))
-        }.singleResult()
-    }
 }

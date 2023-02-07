@@ -3,12 +3,12 @@ package com.xquare.v1servicepoint.point.mapper
 import com.xquare.v1servicepoint.point.PointHistory
 import com.xquare.v1servicepoint.point.entity.PointHistoryEntity
 import com.xquare.v1servicepoint.point.exception.PointNotFoundException
-import com.xquare.v1servicepoint.point.spi.PointHistoryRepositorySpi
+import com.xquare.v1servicepoint.point.spi.PointSpi
 import org.springframework.stereotype.Component
 
 @Component
 class PointHistoryMapperImpl(
-    private val pointHistoryRepositorySpi: PointHistoryRepositorySpi,
+    private val pointSpi: PointSpi,
     private val pointMapper: PointMapper,
 ) : PointHistoryMapper {
     override fun pointHistoryEntityToDomain(pointHistoryEntity: PointHistoryEntity): PointHistory {
@@ -21,7 +21,7 @@ class PointHistoryMapperImpl(
     }
 
     override suspend fun pointHistoryDomainToEntity(pointHistory: PointHistory): PointHistoryEntity {
-        val point = pointHistoryRepositorySpi.findByPointId(pointHistory.id)
+        val point = pointSpi.findByPointId(pointHistory.id)
             ?: throw PointNotFoundException(PointNotFoundException.POINT_NOT_FOUND)
 
         return PointHistoryEntity(

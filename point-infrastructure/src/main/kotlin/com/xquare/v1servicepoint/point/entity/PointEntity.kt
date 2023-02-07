@@ -22,5 +22,5 @@ class PointEntity(
     val point: Int,
 
     @Column(columnDefinition = "TINYINT(1)", nullable = false)
-    val type: Int
+    val type: Boolean
 )

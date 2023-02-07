@@ -13,6 +13,7 @@ class PointRouter {
         "/points".nest {
             contentType(MediaType.APPLICATION_JSON)
             GET("", pointHandler::queryUserPointStatus)
+            POST("/student/{student-id}", pointHandler::saveUserPoint)
         }
     }
 }

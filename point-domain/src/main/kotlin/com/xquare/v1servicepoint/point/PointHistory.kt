@@ -1,11 +1,14 @@
 package com.xquare.v1servicepoint.point
 
 import com.xquare.v1servicepoint.annotation.Aggregate
+import java.time.LocalDate
 import java.util.UUID
 
 @Aggregate
-class PointHistory(
+data class PointHistory(
     val id: UUID,
+
+    val date: LocalDate,
 
     val pointId: UUID,
 

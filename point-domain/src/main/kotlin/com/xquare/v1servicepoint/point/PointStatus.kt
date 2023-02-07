@@ -4,7 +4,7 @@ import com.xquare.v1servicepoint.annotation.Aggregate
 import java.util.UUID
 
 @Aggregate
-class PointStatus(
+data class PointStatus(
     val userId: UUID,
 
     val goodPoint: Int,
@@ -14,4 +14,11 @@ class PointStatus(
     val penaltyLevel: Int,
 
     val isPenaltyRequired: Boolean
-)
+) {
+    fun addGoodPoint(point: Int): PointStatus {
+        return copy(goodPoint = goodPoint + point)
+    }
+    fun addBadPoint(point: Int): PointStatus {
+        return copy(badPoint = badPoint + point)
+    }
+}

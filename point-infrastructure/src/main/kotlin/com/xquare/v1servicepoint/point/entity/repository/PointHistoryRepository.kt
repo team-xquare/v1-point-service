@@ -39,11 +39,8 @@ class PointHistoryRepository(
         }
     }
 
-    private suspend fun Mutiny.Session.persistPointHistoryEntityConcurrently(pointHistoryEntity: PointHistoryEntity) = coroutineScope {
-        launch {
-            this@persistPointHistoryEntityConcurrently.persist(pointHistoryEntity).awaitSuspending()
-        }
-    }
+    private suspend fun Mutiny.Session.persistPointHistoryEntityConcurrently(pointHistoryEntity: PointHistoryEntity) =
+        this@persistPointHistoryEntityConcurrently.persist(pointHistoryEntity).awaitSuspending()
 
     override suspend fun findByPointId(pointId: UUID): Point {
         return reactiveQueryFactory.withFactory { _, reactiveQueryFactory ->

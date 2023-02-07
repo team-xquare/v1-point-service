@@ -11,5 +11,5 @@ data class Point(
 
     val point: Int,
 
-    val type: Boolean
+    val type: Boolean,
 )

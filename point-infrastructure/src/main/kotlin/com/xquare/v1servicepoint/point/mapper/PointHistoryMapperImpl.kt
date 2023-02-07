@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 @Component
 class PointHistoryMapperImpl(
     private val pointHistoryRepository: PointHistoryRepository,
-    private val pointMapper: PointMapper
+    private val pointMapper: PointMapper,
 ) : PointHistoryMapper {
     override fun pointHistoryEntityToDomain(pointHistoryEntity: PointHistoryEntity): PointHistory {
         return PointHistory(

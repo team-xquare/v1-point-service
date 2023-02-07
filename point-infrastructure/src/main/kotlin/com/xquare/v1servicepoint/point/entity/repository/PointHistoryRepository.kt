@@ -31,7 +31,7 @@ class PointHistoryRepository(
                 date = LocalDate.now(),
                 userId = userId,
                 pointId = findByPointId(pointId).id,
-            )
+            ),
         )
 
         reactiveQueryFactory.transactionWithFactory { session, _ ->

@@ -1,6 +1,7 @@
 package com.xquare.v1servicepoint.point.entity
 
 import com.github.f4b6a3.uuid.UuidCreator
+import java.time.LocalDate
 import java.util.UUID
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -17,6 +18,9 @@ class PointHistoryEntity(
     @Id
     @Column(columnDefinition = "BINARY(16)", nullable = false)
     val id: UUID = UuidCreator.getTimeOrderedEpoch(),
+
+    @Column(columnDefinition = "DATE", nullable = false)
+    val date: LocalDate,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "point_id", nullable = false)

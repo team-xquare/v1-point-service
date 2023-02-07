@@ -28,7 +28,7 @@ class PointHistoryRepository(
                 id = UuidCreator.getTimeOrderedEpoch(),
                 date = LocalDate.now(),
                 userId = userId,
-                pointId = findByPointId(pointId).id,
+                pointId = pointId
             ),
         )
 
@@ -40,7 +40,7 @@ class PointHistoryRepository(
     private suspend fun Mutiny.Session.persistPointHistoryEntityConcurrently(pointHistoryEntity: PointHistoryEntity) =
         this@persistPointHistoryEntityConcurrently.persist(pointHistoryEntity).awaitSuspending()
 
-    override suspend fun findByPointId(pointId: UUID): Point {
+    override suspend fun findByPointId(pointId: UUID): Point? {
         return reactiveQueryFactory.withFactory { _, reactiveQueryFactory ->
             reactiveQueryFactory.findByIdIn(pointId)
         }

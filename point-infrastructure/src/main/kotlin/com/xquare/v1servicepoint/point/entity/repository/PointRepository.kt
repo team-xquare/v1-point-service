@@ -4,4 +4,6 @@ import com.xquare.v1servicepoint.point.spi.PointSpi
 import org.springframework.stereotype.Repository
 
 @Repository
-class PointRepository : PointSpi
+class PointRepository : PointSpi {
+    //TODO: PointRepository 구현
+}

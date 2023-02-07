@@ -5,14 +5,14 @@ import com.linecorp.kotlinjdsl.query.HibernateMutinyReactiveQueryFactory
 import com.linecorp.kotlinjdsl.querydsl.expression.col
 import com.linecorp.kotlinjdsl.selectQuery
 import com.xquare.v1servicepoint.point.PointStatus
-import com.xquare.v1servicepoint.point.spi.PointStatusRepositorySpi
+import com.xquare.v1servicepoint.point.spi.PointStatusSpi
 import org.springframework.stereotype.Repository
-import java.util.*
+import java.util.UUID
 
 @Repository
 class PointStatusRepository(
     private val reactiveQueryFactory: HibernateMutinyReactiveQueryFactory,
-) : PointStatusRepositorySpi {
+) : PointStatusSpi {
     override suspend fun findByUserId(userId: UUID): PointStatus? {
         return reactiveQueryFactory.withFactory { _, reactiveQueryFactory ->
             reactiveQueryFactory.findByUserIdIn(userId)

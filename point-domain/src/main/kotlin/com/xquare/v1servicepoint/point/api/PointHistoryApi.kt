@@ -6,5 +6,5 @@ import java.util.UUID
 interface PointHistoryApi {
     suspend fun saveUserPoint(userId: UUID, givePointUserRequest: DomainGivePointUserRequest)
 
-    suspend fun deleteUserPoint(studentId: UUID, historyId:UUID)
+    suspend fun deleteUserPoint(studentId: UUID, historyId: UUID)
 }

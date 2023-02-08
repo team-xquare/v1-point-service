@@ -50,7 +50,7 @@ class PointHistoryRepository(
         return this.selectQuery<PointHistory> {
             where(
                 col(PointHistory::id).equal(id)
-                    .and(col(PointHistory::userId).equal(studentId))
+                    .and(col(PointHistory::userId).equal(studentId)),
             )
         }.singleResult()
     }
@@ -65,7 +65,7 @@ class PointHistoryRepository(
         this.deleteQuery<PointHistoryEntity> {
             where(
                 col(PointHistoryEntity::id).equal(id)
-                    .and(col(PointHistoryEntity::userId).equal(studentId))
+                    .and(col(PointHistoryEntity::userId).equal(studentId)),
             )
         }.executeUpdate()
     }

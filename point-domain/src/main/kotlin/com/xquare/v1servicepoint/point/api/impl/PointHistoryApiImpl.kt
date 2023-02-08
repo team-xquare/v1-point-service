@@ -1,7 +1,6 @@
 package com.xquare.v1servicepoint.point.api.impl
 
 import com.xquare.v1servicepoint.annotation.UseCase
-import com.xquare.v1servicepoint.point.PointHistory
 import com.xquare.v1servicepoint.point.api.PointHistoryApi
 import com.xquare.v1servicepoint.point.api.dto.request.DomainGivePointUserRequest
 import com.xquare.v1servicepoint.point.exception.PointHistoryNotFoundException

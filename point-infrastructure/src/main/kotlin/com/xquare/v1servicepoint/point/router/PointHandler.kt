@@ -12,6 +12,7 @@ import org.springframework.web.reactive.function.server.ServerResponse
 import org.springframework.web.reactive.function.server.bodyToMono
 import org.springframework.web.reactive.function.server.bodyValueAndAwait
 import org.springframework.web.reactive.function.server.buildAndAwait
+import java.net.URI
 import java.util.UUID
 
 @Component
@@ -34,7 +35,7 @@ class PointHandler(
         val domainRequest = givePointUserRequest.toDomainRequest()
 
         pointHistoryApi.saveUserPoint(UUID.fromString(userId), domainRequest)
-        return ServerResponse.ok().buildAndAwait()
+        return ServerResponse.created(URI("/points/student/{student-id}")).buildAndAwait()
     }
 
     private suspend fun ServerRequest.getSavePointRequestBody() =
@@ -43,4 +44,12 @@ class PointHandler(
     private fun SaveUserPointRequest.toDomainRequest() = DomainGivePointUserRequest(
         pointId = this.pointId,
     )
+
+    suspend fun deleteUserPoint(serverRequest: ServerRequest): ServerResponse {
+        val studentId = serverRequest.pathVariable("student-id")
+        val historyId = serverRequest.pathVariable("history-id")
+
+        pointHistoryApi.deleteUserPoint(UUID.fromString(studentId), UUID.fromString(historyId))
+        return ServerResponse.noContent().buildAndAwait()
+    }
 }

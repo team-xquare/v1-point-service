@@ -21,4 +21,12 @@ data class PointStatus(
     fun addBadPoint(point: Int): PointStatus {
         return copy(badPoint = badPoint + point)
     }
+
+    fun minusGoodPoint(point: Int): PointStatus {
+        return copy(goodPoint = goodPoint - point)
+    }
+
+    fun minusBadPoint(point: Int): PointStatus {
+        return copy(badPoint = badPoint - point)
+    }
 }

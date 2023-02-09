@@ -14,6 +14,7 @@ class PointRouter {
             contentType(MediaType.APPLICATION_JSON)
             GET("", pointHandler::queryUserPointStatus)
             POST("/student/{student-id}", pointHandler::saveUserPoint)
+            DELETE("/student/{student-id}/history/{history-id}", pointHandler::deleteUserPoint)
         }
     }
 }

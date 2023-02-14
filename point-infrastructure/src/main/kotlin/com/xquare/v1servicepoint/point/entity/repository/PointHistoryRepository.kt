@@ -79,9 +79,7 @@ class PointHistoryRepository(
         }
     }
 
-    private suspend fun ReactiveQueryFactory.findAllByUserIdAndType(
-        userId: UUID, type: Boolean
-    ): List<PointHistoryElement> {
+    private suspend fun ReactiveQueryFactory.findAllByUserIdAndType(userId: UUID, type: Boolean): List<PointHistoryElement> {
         return this.listQuery {
             select(
                 listOf(

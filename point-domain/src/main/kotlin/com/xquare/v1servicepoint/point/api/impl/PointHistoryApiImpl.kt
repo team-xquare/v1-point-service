@@ -56,4 +56,9 @@ class PointHistoryApiImpl(
         val pointHistoryList = pointHistorySpi.findAllByUserIdAndType(userId, type)
         return PointHistoryListResponse(pointHistoryList)
     }
+
+    override suspend fun queryUserPointHistoryForTeacher(userId: UUID, type: Boolean): PointHistoryListResponse {
+        val pointHistoryList = pointHistorySpi.findAllByUserIdAndType(userId, type)
+        return PointHistoryListResponse(pointHistoryList)
+    }
 }

@@ -6,6 +6,8 @@ import com.linecorp.kotlinjdsl.querydsl.expression.col
 import com.linecorp.kotlinjdsl.selectQuery
 import com.xquare.v1servicepoint.point.Point
 import com.xquare.v1servicepoint.point.spi.PointSpi
+import io.smallrye.mutiny.coroutines.awaitSuspending
+import org.hibernate.reactive.mutiny.Mutiny
 import org.springframework.stereotype.Repository
 import java.util.UUID
 
@@ -27,4 +29,13 @@ class PointRepository(
             where(col(Point::id).`in`(id))
         }.singleResult()
     }
+
+    override suspend fun savePointRole(point: Point) {
+        reactiveQueryFactory.transactionWithFactory { session, _ ->
+            session.persistPointEntityConcurrently(point)
+        }
+    }
+
+    private suspend fun Mutiny.Session.persistPointEntityConcurrently(point: Point) =
+        this@persistPointEntityConcurrently.persist(point).awaitSuspending()
 }

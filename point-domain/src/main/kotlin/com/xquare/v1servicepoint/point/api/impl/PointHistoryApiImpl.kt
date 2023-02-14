@@ -3,6 +3,7 @@ package com.xquare.v1servicepoint.point.api.impl
 import com.xquare.v1servicepoint.annotation.UseCase
 import com.xquare.v1servicepoint.point.api.PointHistoryApi
 import com.xquare.v1servicepoint.point.api.dto.request.DomainGivePointUserRequest
+import com.xquare.v1servicepoint.point.api.dto.response.PointHistoryListResponse
 import com.xquare.v1servicepoint.point.exception.PointHistoryNotFoundException
 import com.xquare.v1servicepoint.point.exception.PointNotFoundException
 import com.xquare.v1servicepoint.point.exception.UserNotFoundException
@@ -49,5 +50,10 @@ class PointHistoryApiImpl(
         }
 
         pointHistorySpi.deleteByIdAndUserId(pointHistory)
+    }
+
+    override suspend fun queryUserPointHistory(userId: UUID, type: Boolean): PointHistoryListResponse {
+        val pointHistoryList = pointHistorySpi.findAllByUserIdAndType(userId, type)
+        return PointHistoryListResponse(pointHistoryList)
     }
 }

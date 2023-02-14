@@ -52,4 +52,12 @@ class PointHandler(
         pointHistoryApi.deleteUserPoint(UUID.fromString(studentId), UUID.fromString(historyId))
         return ServerResponse.noContent().buildAndAwait()
     }
+
+    suspend fun queryUserPointHistory(serverRequest: ServerRequest): ServerResponse {
+        val userId = serverRequest.pathVariable("student-id")
+        val type = serverRequest.queryParam("type").orElse("")
+
+        val pointHistoryListResponse = pointHistoryApi.queryUserPointHistory(UUID.fromString(userId), type)
+        return ServerResponse.ok().bodyValueAndAwait(pointHistoryListResponse)
+    }
 }

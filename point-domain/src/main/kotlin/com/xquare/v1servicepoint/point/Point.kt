@@ -12,4 +12,12 @@ data class Point(
     val point: Int,
 
     val type: Boolean,
-)
+) {
+    fun updatePointRole(reason: String, point: Int, type: Boolean): Point {
+        return copy(
+            reason = reason,
+            point = point,
+            type = type,
+        )
+    }
+}

@@ -5,6 +5,8 @@ import com.xquare.v1servicepoint.point.api.PointApi
 import com.xquare.v1servicepoint.point.api.PointHistoryApi
 import com.xquare.v1servicepoint.point.api.dto.request.DomainGivePointUserRequest
 import com.xquare.v1servicepoint.point.api.dto.request.DomainUpdatePointRoleRequest
+import com.xquare.v1servicepoint.point.api.dto.request.DomainSavePointRoleRequest
+import com.xquare.v1servicepoint.point.router.dto.SavePointRoleRequest
 import com.xquare.v1servicepoint.point.router.dto.SaveUserPointRequest
 import com.xquare.v1servicepoint.point.router.dto.UpdatePointRoleRequest
 import kotlinx.coroutines.reactor.awaitSingle
@@ -68,6 +70,23 @@ class PointHandler(
         this.bodyToMono<UpdatePointRoleRequest>().awaitSingle()
 
     private fun UpdatePointRoleRequest.toDomainRequest() = DomainUpdatePointRoleRequest(
+        reason = this.reason,
+        type = this.type,
+        point = this.point,
+    )
+
+    suspend fun savePointRole(serverRequest: ServerRequest): ServerResponse {
+        val savePointRoleRequest = serverRequest.getSavePointRoleRequestBody()
+        val domainRequest = savePointRoleRequest.toDomainRequest()
+
+        pointApi.savePointRole(domainRequest)
+        return ServerResponse.created(URI("/points/rule")).buildAndAwait()
+    }
+
+    private suspend fun ServerRequest.getSavePointRoleRequestBody() =
+        this.bodyToMono<SavePointRoleRequest>().awaitSingle()
+
+    private fun SavePointRoleRequest.toDomainRequest() = DomainSavePointRoleRequest(
         reason = this.reason,
         type = this.type,
         point = this.point,

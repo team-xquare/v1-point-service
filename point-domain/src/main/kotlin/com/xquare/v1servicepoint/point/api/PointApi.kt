@@ -6,4 +6,6 @@ import java.util.UUID
 interface PointApi {
 
     suspend fun queryPointStatus(userId: UUID): PointStatusResponse
+
+    suspend fun deletePointRole(pointId: UUID)
 }

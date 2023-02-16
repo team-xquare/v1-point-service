@@ -4,6 +4,8 @@ import com.xquare.v1servicepoint.configuration.exception.UnAuthorizedException
 import com.xquare.v1servicepoint.point.api.PointApi
 import com.xquare.v1servicepoint.point.api.PointHistoryApi
 import com.xquare.v1servicepoint.point.api.dto.request.DomainGivePointUserRequest
+import com.xquare.v1servicepoint.point.api.dto.request.DomainSavePointRoleRequest
+import com.xquare.v1servicepoint.point.router.dto.SavePointRoleRequest
 import com.xquare.v1servicepoint.point.router.dto.SaveUserPointRequest
 import kotlinx.coroutines.reactor.awaitSingle
 import org.springframework.stereotype.Component
@@ -58,4 +60,21 @@ class PointHandler(
         pointApi.deletePointRole(UUID.fromString(pointId))
         return ServerResponse.noContent().buildAndAwait()
     }
+
+    suspend fun savePointRole(serverRequest: ServerRequest): ServerResponse {
+        val savePointRoleRequest = serverRequest.getSavePointRoleRequestBody()
+        val domainRequest = savePointRoleRequest.toDomainRequest()
+
+        pointApi.savePointRole(domainRequest)
+        return ServerResponse.created(URI("/points/rule")).buildAndAwait()
+    }
+
+    private suspend fun ServerRequest.getSavePointRoleRequestBody() =
+        this.bodyToMono<SavePointRoleRequest>().awaitSingle()
+
+    private fun SavePointRoleRequest.toDomainRequest() = DomainSavePointRoleRequest(
+        reason = this.reason,
+        type = this.type,
+        point = this.point,
+    )
 }

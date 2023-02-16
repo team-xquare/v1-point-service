@@ -9,6 +9,8 @@ import com.xquare.v1servicepoint.point.Point
 import com.xquare.v1servicepoint.point.entity.PointEntity
 import com.xquare.v1servicepoint.point.mapper.PointMapper
 import com.xquare.v1servicepoint.point.spi.PointSpi
+import io.smallrye.mutiny.coroutines.awaitSuspending
+import org.hibernate.reactive.mutiny.Mutiny
 import org.springframework.stereotype.Repository
 import java.util.*
 
@@ -45,4 +47,14 @@ class PointRepository(
             where(col(PointEntity::id).`in`(pointId))
         }
     }
+
+    override suspend fun savePointRole(point: Point) {
+        val pointEntity = pointMapper.pointDomainToEntity(point)
+        reactiveQueryFactory.transactionWithFactory { session, _ ->
+            session.persistPointEntityConcurrently(pointEntity)
+        }
+    }
+
+    private suspend fun Mutiny.Session.persistPointEntityConcurrently(point: PointEntity) =
+        this@persistPointEntityConcurrently.persist(point).awaitSuspending()
 }

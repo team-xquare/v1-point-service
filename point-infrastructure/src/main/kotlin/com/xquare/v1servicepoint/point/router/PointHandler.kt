@@ -60,7 +60,7 @@ class PointHandler(
         val domainRequest = savePointRoleRequest.toDomainRequest()
 
         pointApi.savePointRole(domainRequest)
-        return ServerResponse.created(URI("/points/role")).buildAndAwait()
+        return ServerResponse.created(URI("/points/rule")).buildAndAwait()
     }
 
     private suspend fun ServerRequest.getSavePointRoleRequestBody() =

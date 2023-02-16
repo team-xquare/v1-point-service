@@ -17,6 +17,8 @@ class PointRouter {
             DELETE("/student/{student-id}/history/{history-id}", pointHandler::deleteUserPoint)
             GET("/?type=", pointHandler::queryUserPointHistory)
             GET("/{student-id}/history?type=", pointHandler::queryUserPointHistoryForTeacher)
+            PUT("/rule/{point-id}", pointHandler::updatePointRole)
+            DELETE("/rule/{point-id}", pointHandler::deletePointRole)
             POST("/rule", pointHandler::savePointRole)
         }
     }

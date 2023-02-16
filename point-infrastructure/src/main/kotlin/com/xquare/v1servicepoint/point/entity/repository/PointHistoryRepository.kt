@@ -8,6 +8,7 @@ import com.linecorp.kotlinjdsl.query.HibernateMutinyReactiveQueryFactory
 import com.linecorp.kotlinjdsl.querydsl.expression.col
 import com.linecorp.kotlinjdsl.querydsl.from.join
 import com.linecorp.kotlinjdsl.selectQuery
+import com.linecorp.kotlinjdsl.singleQueryOrNull
 import com.xquare.v1servicepoint.point.PointHistory
 import com.xquare.v1servicepoint.point.api.dto.response.PointHistoryElement
 import com.xquare.v1servicepoint.point.entity.PointEntity
@@ -16,6 +17,7 @@ import com.xquare.v1servicepoint.point.mapper.PointHistoryMapper
 import com.xquare.v1servicepoint.point.spi.PointHistorySpi
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import org.hibernate.reactive.mutiny.Mutiny
+import javax.persistence.criteria.JoinType
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
 import java.util.*
@@ -46,17 +48,20 @@ class PointHistoryRepository(
         this@persistPointHistoryEntityConcurrently.persist(pointHistoryEntity).awaitSuspending()
 
     override suspend fun findByIdAndStudentId(id: UUID, studentId: UUID): PointHistory? {
-        return reactiveQueryFactory.transactionWithFactory { _, reactiveQueryFactory ->
+        val pointHistory = reactiveQueryFactory.transactionWithFactory { _, reactiveQueryFactory ->
             reactiveQueryFactory.findByIdAndStudentId(id, studentId)
         }
+
+        return pointHistory?.let { pointHistoryMapper.pointHistoryEntityToDomain(it) }
     }
 
-    private suspend fun ReactiveQueryFactory.findByIdAndStudentId(id: UUID, studentId: UUID): PointHistory {
-        return this.selectQuery<PointHistory> {
+    private suspend fun ReactiveQueryFactory.findByIdAndStudentId(id: UUID, studentId: UUID): PointHistoryEntity? {
+        return this.singleQueryOrNull<PointHistoryEntity> {
             where(
-                col(PointHistory::id).equal(id).and(col(PointHistory::userId).equal(studentId)),
+                col(PointHistoryEntity::id).equal(id)
+                    .and(col(PointHistoryEntity::userId).equal(studentId)),
             )
-        }.singleResult()
+        }
     }
 
     override suspend fun deleteByIdAndUserId(pointHistory: PointHistory) {
@@ -96,5 +101,20 @@ class PointHistoryRepository(
                 col(PointHistoryEntity::userId).equal(userId).and(col(PointEntity::type).equal(type)),
             )
         }
+    }
+    
+    override suspend fun findAllByPointId(pointId: UUID): List<PointHistory> {
+        return reactiveQueryFactory.transactionWithFactory { _, reactiveQueryFactory ->
+            reactiveQueryFactory.findAllByPointIdIn(pointId)
+        }.map { pointHistoryMapper.pointHistoryEntityToDomain(it) }
+    }
+
+    private suspend fun ReactiveQueryFactory.findAllByPointIdIn(pointId: UUID): List<PointHistoryEntity> {
+        return this.selectQuery<PointHistoryEntity> {
+            select(entity(PointHistoryEntity::class))
+            from(entity(PointHistoryEntity::class))
+            join(PointHistoryEntity::point, JoinType.LEFT)
+            where(col(PointEntity::id).`in`(pointId))
+        }.resultList()
     }
 }

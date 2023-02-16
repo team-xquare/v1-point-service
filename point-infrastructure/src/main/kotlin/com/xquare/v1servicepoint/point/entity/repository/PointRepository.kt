@@ -1,9 +1,10 @@
 package com.xquare.v1servicepoint.point.entity.repository
 
 import com.linecorp.kotlinjdsl.ReactiveQueryFactory
+import com.linecorp.kotlinjdsl.deleteQuery
 import com.linecorp.kotlinjdsl.query.HibernateMutinyReactiveQueryFactory
 import com.linecorp.kotlinjdsl.querydsl.expression.col
-import com.linecorp.kotlinjdsl.selectQuery
+import com.linecorp.kotlinjdsl.singleQueryOrNull
 import com.xquare.v1servicepoint.point.Point
 import com.xquare.v1servicepoint.point.entity.PointEntity
 import com.xquare.v1servicepoint.point.mapper.PointMapper
@@ -11,7 +12,7 @@ import com.xquare.v1servicepoint.point.spi.PointSpi
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import org.hibernate.reactive.mutiny.Mutiny
 import org.springframework.stereotype.Repository
-import java.util.UUID
+import java.util.*
 
 @Repository
 class PointRepository(
@@ -20,18 +21,44 @@ class PointRepository(
 ) : PointSpi {
 
     override suspend fun findByPointId(pointId: UUID): Point? {
-        return reactiveQueryFactory.withFactory { _, reactiveQueryFactory ->
+        val pointEntity = reactiveQueryFactory.withFactory { _, reactiveQueryFactory ->
             reactiveQueryFactory.findByIdIn(pointId)
+        }
+
+        return pointEntity?.let { pointMapper.pointEntityToDomain(it) }
+    }
+
+    private suspend fun ReactiveQueryFactory.findByIdIn(id: UUID): PointEntity? { // 코루틴 동작 안하도록 변경해야 mapper도 변경 할 수 있음
+        return this.singleQueryOrNull<PointEntity> {
+            select(entity(PointEntity::class))
+            from(entity(PointEntity::class))
+            where(col(PointEntity::id).`in`(id))
         }
     }
 
-    private suspend fun ReactiveQueryFactory.findByIdIn(id: UUID): Point { // 코루틴 동작 안하도록 변경해야 mapper도 변경 할 수 있음
-        return this.selectQuery<Point> {
-            select(entity(Point::class))
-            from(entity(Point::class))
-            where(col(Point::id).`in`(id))
-        }.singleResult()
+    override suspend fun applyPointChanges(point: Point): Point {
+        val pointEntity = pointMapper.pointDomainToEntity(point)
+        val updatePointEntity = reactiveQueryFactory.transactionWithFactory { session, _ ->
+            session.mergePointEntity(pointEntity)
+        }
+
+        return pointMapper.pointEntityToDomain(updatePointEntity)
     }
+
+    override suspend fun deletePointRole(pointId: UUID) {
+        reactiveQueryFactory.withFactory { _, reactiveQueryFactory ->
+            reactiveQueryFactory.deletePointRoleIn(pointId)
+        }
+    }
+
+    private suspend fun ReactiveQueryFactory.deletePointRoleIn(pointId: UUID) {
+        this.deleteQuery<PointEntity> {
+            where(col(PointEntity::id).`in`(pointId))
+        }
+    }
+
+    private suspend fun Mutiny.Session.mergePointEntity(pointEntity: PointEntity) =
+        this.merge(pointEntity).awaitSuspending()
 
     override suspend fun savePointRole(point: Point) {
         val pointEntity = pointMapper.pointDomainToEntity(point)

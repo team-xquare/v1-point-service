@@ -1,6 +1,7 @@
 package com.xquare.v1servicepoint.point.entity.repository
 
 import com.linecorp.kotlinjdsl.ReactiveQueryFactory
+import com.linecorp.kotlinjdsl.deleteQuery
 import com.linecorp.kotlinjdsl.query.HibernateMutinyReactiveQueryFactory
 import com.linecorp.kotlinjdsl.querydsl.expression.col
 import com.linecorp.kotlinjdsl.singleQueryOrNull
@@ -11,7 +12,7 @@ import com.xquare.v1servicepoint.point.spi.PointSpi
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import org.hibernate.reactive.mutiny.Mutiny
 import org.springframework.stereotype.Repository
-import java.util.UUID
+import java.util.*
 
 @Repository
 class PointRepository(
@@ -42,6 +43,18 @@ class PointRepository(
         }
 
         return pointMapper.pointEntityToDomain(updatePointEntity)
+    }
+
+    override suspend fun deletePointRole(pointId: UUID) {
+        reactiveQueryFactory.withFactory { _, reactiveQueryFactory ->
+            reactiveQueryFactory.deletePointRoleIn(pointId)
+        }
+    }
+
+    private suspend fun ReactiveQueryFactory.deletePointRoleIn(pointId: UUID) {
+        this.deleteQuery<PointEntity> {
+            where(col(PointEntity::id).`in`(pointId))
+        }
     }
 
     private suspend fun Mutiny.Session.mergePointEntity(pointEntity: PointEntity) =

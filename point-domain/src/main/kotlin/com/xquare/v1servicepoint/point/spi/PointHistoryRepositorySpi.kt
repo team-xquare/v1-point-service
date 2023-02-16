@@ -10,4 +10,6 @@ interface PointHistoryRepositorySpi {
 
     suspend fun findByIdAndStudentId(id: UUID, studentId: UUID): PointHistory?
     suspend fun deleteByIdAndUserId(pointHistory: PointHistory)
+
+    suspend fun findAllByPointId(pointId: UUID): List<PointHistory>
 }

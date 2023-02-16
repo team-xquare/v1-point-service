@@ -10,5 +10,7 @@ interface PointRepositorySpi {
 
     suspend fun applyPointChanges(point: Point): Point
 
+    suspend fun deletePointRole(pointId: UUID)
+
     suspend fun savePointRole(point: Point)
 }

@@ -11,5 +11,7 @@ interface PointApi {
 
     suspend fun updatePointRole(pointId: UUID, request: DomainUpdatePointRoleRequest)
 
+    suspend fun deletePointRole(pointId: UUID)
+
     suspend fun savePointRole(request: DomainSavePointRoleRequest)
 }

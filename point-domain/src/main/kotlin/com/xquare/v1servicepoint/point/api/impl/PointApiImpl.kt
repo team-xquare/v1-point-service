@@ -10,12 +10,14 @@ import com.xquare.v1servicepoint.point.exception.UserNotFoundException
 import com.xquare.v1servicepoint.point.spi.PointSpi
 import com.xquare.v1servicepoint.point.spi.PointStatusSpi
 import com.xquare.v1servicepoint.point.Point
+import com.xquare.v1servicepoint.point.spi.PointHistorySpi
 import java.util.UUID
 
 @UseCase
 class PointApiImpl(
     private val pointStatusSpi: PointStatusSpi,
     private val pointSpi: PointSpi,
+    private val pointHistorySpi: PointHistorySpi,
 ) : PointApi {
 
     override suspend fun queryPointStatus(userId: UUID): PointStatusResponse {
@@ -39,6 +41,30 @@ class PointApiImpl(
         )
 
         pointSpi.applyPointChanges(updatedPoint)
+    }
+
+    override suspend fun deletePointRole(pointId: UUID) {
+        val point = pointSpi.findByPointId(pointId)
+            ?: throw PointNotFoundException(PointNotFoundException.POINT_NOT_FOUND)
+        val userPointHistory = pointHistorySpi.findAllByPointId(point.id)
+
+        val pointStatus = pointStatusSpi.findByUserId(userPointHistory.first().userId)
+
+        userPointHistory.forEach {
+            pointHistorySpi.deleteByIdAndUserId(it)
+
+            when (point.type) {
+                true -> {
+                    val minusGoodPoint = pointStatus?.minusGoodPoint(point.point)
+                    pointStatusSpi.applyPointHistoryChanges(minusGoodPoint!!)
+                }
+                false -> {
+                    val minusBadPoint = pointStatus?.minusBadPoint(point.point)
+                    pointStatusSpi.applyPointHistoryChanges(minusBadPoint!!)
+                }
+            }
+        }
+        pointSpi.deletePointRole(point.id)
     }
 
     override suspend fun savePointRole(request: DomainSavePointRoleRequest) {

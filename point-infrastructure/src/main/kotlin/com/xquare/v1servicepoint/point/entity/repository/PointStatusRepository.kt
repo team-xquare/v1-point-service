@@ -5,6 +5,8 @@ import com.linecorp.kotlinjdsl.query.HibernateMutinyReactiveQueryFactory
 import com.linecorp.kotlinjdsl.querydsl.expression.col
 import com.linecorp.kotlinjdsl.selectQuery
 import com.xquare.v1servicepoint.point.PointStatus
+import com.xquare.v1servicepoint.point.entity.PointStatusEntity
+import com.xquare.v1servicepoint.point.mapper.PointStatusMapper
 import com.xquare.v1servicepoint.point.spi.PointStatusSpi
 import org.springframework.stereotype.Repository
 import java.util.UUID
@@ -12,18 +14,21 @@ import java.util.UUID
 @Repository
 class PointStatusRepository(
     private val reactiveQueryFactory: HibernateMutinyReactiveQueryFactory,
+    private val pointStatusMapper: PointStatusMapper
 ) : PointStatusSpi {
     override suspend fun findByUserId(userId: UUID): PointStatus? {
-        return reactiveQueryFactory.withFactory { _, reactiveQueryFactory ->
+        val pointId =  reactiveQueryFactory.withFactory { _, reactiveQueryFactory ->
             reactiveQueryFactory.findByUserIdIn(userId)
         }
+
+        return pointId?.let { pointStatusMapper.pointStatusEntityToDomain(it) }
     }
 
-    private suspend fun ReactiveQueryFactory.findByUserIdIn(id: UUID): PointStatus {
-        return this.selectQuery<PointStatus> {
-            select(entity(PointStatus::class))
-            from(entity(PointStatus::class))
-            where(col(PointStatus::userId).`in`(id))
+    private suspend fun ReactiveQueryFactory.findByUserIdIn(id: UUID): PointStatusEntity? {
+        return this.selectQuery<PointStatusEntity> {
+            select(entity(PointStatusEntity::class))
+            from(entity(PointStatusEntity::class))
+            where(col(PointStatusEntity::userId).`in`(id))
         }.singleResult()
     }
 }

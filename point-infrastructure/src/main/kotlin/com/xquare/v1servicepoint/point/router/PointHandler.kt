@@ -52,4 +52,10 @@ class PointHandler(
         pointHistoryApi.deleteUserPoint(UUID.fromString(studentId), UUID.fromString(historyId))
         return ServerResponse.noContent().buildAndAwait()
     }
+
+    suspend fun deletePointRole(serverRequest: ServerRequest): ServerResponse {
+        val pointId = serverRequest.pathVariable("point-id")
+        pointApi.deletePointRole(UUID.fromString(pointId))
+        return ServerResponse.noContent().buildAndAwait()
+    }
 }

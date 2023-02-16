@@ -15,6 +15,7 @@ class PointRouter {
             GET("", pointHandler::queryUserPointStatus)
             POST("/student/{student-id}", pointHandler::saveUserPoint)
             DELETE("/student/{student-id}/history/{history-id}", pointHandler::deleteUserPoint)
+            DELETE("/rule/{point-id}", pointHandler::deletePointRole)
         }
     }
 }

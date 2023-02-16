@@ -17,7 +17,7 @@ class PointStatusRepository(
     private val pointStatusMapper: PointStatusMapper,
 ) : PointStatusSpi {
     override suspend fun findByUserId(userId: UUID): PointStatus? {
-        val pointId =  reactiveQueryFactory.withFactory { _, reactiveQueryFactory ->
+        val pointId = reactiveQueryFactory.withFactory { _, reactiveQueryFactory ->
             reactiveQueryFactory.findByUserIdIn(userId)
         }
 

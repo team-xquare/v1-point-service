@@ -30,9 +30,9 @@ class PointApiImpl(
 
     override suspend fun updatePointRole(pointId: UUID, request: DomainUpdatePointRoleRequest) {
         val point = pointSpi.findByPointId(pointId)
-            ?: throw PointNotFoundException((PointNotFoundException.POINT_NOT_FOUND))
+            ?: throw PointNotFoundException(PointNotFoundException.POINT_NOT_FOUND)
 
-        val updatePoint = point.updatePointRole(
+        val updatedPoint = point.updatePointRole(
             reason = request.reason,
             type = request.type,
             point = request.point,

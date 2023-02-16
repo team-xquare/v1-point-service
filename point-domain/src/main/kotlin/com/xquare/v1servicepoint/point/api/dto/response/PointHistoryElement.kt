@@ -8,5 +8,5 @@ data class PointHistoryElement(
     val date: LocalDate,
     val reason: String,
     val pointType: Boolean,
-    val point: Int
+    val point: Int,
 )

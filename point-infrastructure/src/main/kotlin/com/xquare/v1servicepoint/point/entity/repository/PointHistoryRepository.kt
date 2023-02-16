@@ -88,7 +88,7 @@ class PointHistoryRepository(
                     col(PointHistoryEntity::userId),
                     col(PointHistoryEntity::point),
                     col(PointEntity::type),
-                )
+                ),
             )
             from(entity(PointHistoryEntity::class))
             join(PointHistoryEntity::point, JoinType.LEFT)

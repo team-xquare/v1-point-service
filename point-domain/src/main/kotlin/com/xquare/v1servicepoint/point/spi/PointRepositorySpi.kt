@@ -8,5 +8,7 @@ import java.util.UUID
 interface PointRepositorySpi {
     suspend fun findByPointId(pointId: UUID): Point?
 
+    suspend fun deletePointRole(pointId: UUID)
+
     suspend fun savePointRole(point: Point)
 }

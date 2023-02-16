@@ -8,5 +8,7 @@ interface PointApi {
 
     suspend fun queryPointStatus(userId: UUID): PointStatusResponse
 
+    suspend fun deletePointRole(pointId: UUID)
+
     suspend fun savePointRole(request: DomainSavePointRoleRequest)
 }

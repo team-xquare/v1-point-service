@@ -57,7 +57,6 @@ class PointHandler(
         return ServerResponse.noContent().buildAndAwait()
     }
 
-
     suspend fun updatePointRole(serverRequest: ServerRequest): ServerResponse {
         val pointId = serverRequest.pathVariable("point-id")
         val updatePointRoleRequest = serverRequest.getUpdatePointRequestBody()
@@ -76,13 +75,11 @@ class PointHandler(
         point = this.point,
     )
 
-
     suspend fun deletePointRole(serverRequest: ServerRequest): ServerResponse {
         val pointId = serverRequest.pathVariable("point-id")
         pointApi.deletePointRole(UUID.fromString(pointId))
         return ServerResponse.noContent().buildAndAwait()
     }
-
 
     suspend fun savePointRole(serverRequest: ServerRequest): ServerResponse {
         val savePointRoleRequest = serverRequest.getSavePointRoleRequestBody()

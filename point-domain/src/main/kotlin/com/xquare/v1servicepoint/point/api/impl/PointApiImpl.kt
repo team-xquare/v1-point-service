@@ -38,7 +38,7 @@ class PointApiImpl(
             point = request.point,
         )
 
-        pointSpi.applyPointChanges(updatePoint)
+        pointSpi.applyPointChanges(updatedPoint)
     }
 
     override suspend fun savePointRole(request: DomainSavePointRoleRequest) {

@@ -12,5 +12,5 @@ data class SavePointRoleRequest(
     val type: Boolean,
 
     @field:NotNull
-    val point: Int
+    val point: Int,
 )

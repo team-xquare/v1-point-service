@@ -3,22 +3,24 @@ package com.xquare.v1servicepoint.point.entity.repository
 import com.github.f4b6a3.uuid.UuidCreator
 import com.linecorp.kotlinjdsl.ReactiveQueryFactory
 import com.linecorp.kotlinjdsl.deleteQuery
+import com.linecorp.kotlinjdsl.listQuery
 import com.linecorp.kotlinjdsl.query.HibernateMutinyReactiveQueryFactory
 import com.linecorp.kotlinjdsl.querydsl.expression.col
 import com.linecorp.kotlinjdsl.querydsl.from.join
 import com.linecorp.kotlinjdsl.selectQuery
 import com.linecorp.kotlinjdsl.singleQueryOrNull
 import com.xquare.v1servicepoint.point.PointHistory
+import com.xquare.v1servicepoint.point.api.dto.response.PointHistoryElement
 import com.xquare.v1servicepoint.point.entity.PointEntity
 import com.xquare.v1servicepoint.point.entity.PointHistoryEntity
 import com.xquare.v1servicepoint.point.mapper.PointHistoryMapper
 import com.xquare.v1servicepoint.point.spi.PointHistorySpi
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import org.hibernate.reactive.mutiny.Mutiny
-import javax.persistence.criteria.JoinType
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
 import java.util.UUID
+import javax.persistence.criteria.JoinType
 
 @Repository
 class PointHistoryRepository(
@@ -70,10 +72,34 @@ class PointHistoryRepository(
     private suspend fun ReactiveQueryFactory.deleteWithIdAndUserId(id: UUID, studentId: UUID) {
         this.deleteQuery<PointHistoryEntity> {
             where(
-                col(PointHistoryEntity::id).equal(id)
-                    .and(col(PointHistoryEntity::userId).equal(studentId)),
+                col(PointHistoryEntity::id).equal(id).and(col(PointHistoryEntity::userId).equal(studentId)),
             )
         }.executeUpdate()
+    }
+
+    override suspend fun findAllByUserIdAndType(userId: UUID, type: Boolean): List<PointHistoryElement> {
+        return reactiveQueryFactory.transactionWithFactory { _, reactiveQueryFactory ->
+            reactiveQueryFactory.findAllByUserIdAndType(userId, type)
+        }
+    }
+
+    private suspend fun ReactiveQueryFactory.findAllByUserIdAndType(userId: UUID, type: Boolean): List<PointHistoryElement> {
+        return this.listQuery {
+            select(
+                listOf(
+                    col(PointHistoryEntity::id),
+                    col(PointHistoryEntity::date),
+                    col(PointHistoryEntity::userId),
+                    col(PointHistoryEntity::point),
+                    col(PointEntity::type),
+                ),
+            )
+            from(entity(PointHistoryEntity::class))
+            join(PointHistoryEntity::point, JoinType.LEFT)
+            where(
+                col(PointHistoryEntity::userId).equal(userId).and(col(PointEntity::type).equal(type)),
+            )
+        }
     }
 
     override suspend fun findAllByPointId(pointId: UUID): List<PointHistory> {

@@ -42,12 +42,12 @@ class PointApiImpl(
     }
 
     override suspend fun savePointRole(request: DomainSavePointRoleRequest) {
-       val point = Point(
-           id = UUID.randomUUID(),
-           reason = request.reason,
-           type = request.type,
-           point = request.point,
-       )
-       pointSpi.savePointRole(point)
-   }
+        val point = Point(
+            id = UUID.randomUUID(),
+            reason = request.reason,
+            type = request.type,
+            point = request.point,
+        )
+        pointSpi.savePointRole(point)
+    }
 }

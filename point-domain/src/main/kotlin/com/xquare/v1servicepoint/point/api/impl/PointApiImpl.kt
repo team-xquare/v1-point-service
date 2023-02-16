@@ -9,6 +9,7 @@ import com.xquare.v1servicepoint.point.exception.UserNotFoundException
 import com.xquare.v1servicepoint.point.spi.PointSpi
 import com.xquare.v1servicepoint.point.spi.PointStatusSpi
 import com.xquare.v1servicepoint.point.Point
+import com.xquare.v1servicepoint.point.spi.PointHistorySpi
 import java.util.UUID
 
 @UseCase
@@ -51,7 +52,7 @@ class PointApiImpl(
         }
         pointSpi.deletePointRole(point.id)
     }
-    
+
     override suspend fun savePointRole(request: DomainSavePointRoleRequest) {
         val point = Point(
             id = UUID.randomUUID(),

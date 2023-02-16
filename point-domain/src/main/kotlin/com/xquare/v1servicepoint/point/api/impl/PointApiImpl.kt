@@ -14,7 +14,7 @@ import java.util.UUID
 class PointApiImpl(
     private val pointStatusSpi: PointStatusSpi,
     private val pointSpi: PointSpi,
-    private val pointHistorySpi: PointHistorySpi
+    private val pointHistorySpi: PointHistorySpi,
 ) : PointApi {
 
     override suspend fun queryPointStatus(userId: UUID): PointStatusResponse {

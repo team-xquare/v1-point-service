@@ -14,7 +14,7 @@ import java.util.UUID
 @Repository
 class PointStatusRepository(
     private val reactiveQueryFactory: HibernateMutinyReactiveQueryFactory,
-    private val pointStatusMapper: PointStatusMapper
+    private val pointStatusMapper: PointStatusMapper,
 ) : PointStatusSpi {
     override suspend fun findByUserId(userId: UUID): PointStatus? {
         val pointId =  reactiveQueryFactory.withFactory { _, reactiveQueryFactory ->

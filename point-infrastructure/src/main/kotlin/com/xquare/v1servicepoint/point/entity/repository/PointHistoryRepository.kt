@@ -19,7 +19,7 @@ import io.smallrye.mutiny.coroutines.awaitSuspending
 import org.hibernate.reactive.mutiny.Mutiny
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
-import java.util.*
+import java.util.UUID
 import javax.persistence.criteria.JoinType
 
 @Repository
@@ -101,7 +101,7 @@ class PointHistoryRepository(
             )
         }
     }
-    
+
     override suspend fun findAllByPointId(pointId: UUID): List<PointHistory> {
         return reactiveQueryFactory.transactionWithFactory { _, reactiveQueryFactory ->
             reactiveQueryFactory.findAllByPointIdIn(pointId)

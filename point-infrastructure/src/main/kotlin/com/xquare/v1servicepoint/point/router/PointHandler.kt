@@ -64,7 +64,7 @@ class PointHandler(
         val pointHistoryListResponse = pointHistoryApi.queryUserPointHistory(UUID.fromString(userId), type.toBoolean())
         return ServerResponse.ok().bodyValueAndAwait(pointHistoryListResponse)
     }
-    
+
     suspend fun updatePointRole(serverRequest: ServerRequest): ServerResponse {
         val pointId = serverRequest.pathVariable("point-id")
         val updatePointRoleRequest = serverRequest.getUpdatePointRequestBody()

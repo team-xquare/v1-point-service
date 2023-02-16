@@ -58,14 +58,6 @@ class PointHandler(
     }
 
     suspend fun queryUserPointHistory(serverRequest: ServerRequest): ServerResponse {
-        val userId = serverRequest.headers().firstHeader("Request-User-Id")
-        val type = serverRequest.queryParam("type").orElse("")
-
-        val pointHistoryListResponse = pointHistoryApi.queryUserPointHistory(UUID.fromString(userId), type.toBoolean())
-        return ServerResponse.ok().bodyValueAndAwait(pointHistoryListResponse)
-    }
-
-    suspend fun queryUserPointHistoryForTeacher(serverRequest: ServerRequest): ServerResponse {
         val userId = serverRequest.pathVariable("student-id")
         val type = serverRequest.queryParam("type").orElse("")
 

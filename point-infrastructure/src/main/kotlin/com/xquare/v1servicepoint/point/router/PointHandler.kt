@@ -4,9 +4,11 @@ import com.xquare.v1servicepoint.configuration.exception.UnAuthorizedException
 import com.xquare.v1servicepoint.point.api.PointApi
 import com.xquare.v1servicepoint.point.api.PointHistoryApi
 import com.xquare.v1servicepoint.point.api.dto.request.DomainGivePointUserRequest
+import com.xquare.v1servicepoint.point.api.dto.request.DomainUpdatePointRoleRequest
 import com.xquare.v1servicepoint.point.api.dto.request.DomainSavePointRoleRequest
 import com.xquare.v1servicepoint.point.router.dto.SavePointRoleRequest
 import com.xquare.v1servicepoint.point.router.dto.SaveUserPointRequest
+import com.xquare.v1servicepoint.point.router.dto.UpdatePointRoleRequest
 import kotlinx.coroutines.reactor.awaitSingle
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.server.ServerRequest
@@ -33,8 +35,8 @@ class PointHandler(
     suspend fun saveUserPoint(serverRequest: ServerRequest): ServerResponse {
         val userId = serverRequest.pathVariable("student-id")
 
-        val givePointUserRequest = serverRequest.getSavePointRequestBody()
-        val domainRequest = givePointUserRequest.toDomainRequest()
+        val savePointUserRequest = serverRequest.getSavePointRequestBody()
+        val domainRequest = savePointUserRequest.toDomainRequest()
 
         pointHistoryApi.saveUserPoint(UUID.fromString(userId), domainRequest)
         return ServerResponse.created(URI("/points/student/{student-id}")).buildAndAwait()
@@ -54,6 +56,24 @@ class PointHandler(
         pointHistoryApi.deleteUserPoint(UUID.fromString(studentId), UUID.fromString(historyId))
         return ServerResponse.noContent().buildAndAwait()
     }
+
+    suspend fun updatePointRole(serverRequest: ServerRequest): ServerResponse {
+        val pointId = serverRequest.pathVariable("point-id")
+        val updatePointRoleRequest = serverRequest.getUpdatePointRequestBody()
+        val domainRequest = updatePointRoleRequest.toDomainRequest()
+
+        pointApi.updatePointRole(UUID.fromString(pointId), domainRequest)
+        return ServerResponse.noContent().buildAndAwait()
+    }
+
+    private suspend fun ServerRequest.getUpdatePointRequestBody() =
+        this.bodyToMono<UpdatePointRoleRequest>().awaitSingle()
+
+    private fun UpdatePointRoleRequest.toDomainRequest() = DomainUpdatePointRoleRequest(
+        reason = this.reason,
+        type = this.type,
+        point = this.point,
+    )
 
     suspend fun deletePointRole(serverRequest: ServerRequest): ServerResponse {
         val pointId = serverRequest.pathVariable("point-id")

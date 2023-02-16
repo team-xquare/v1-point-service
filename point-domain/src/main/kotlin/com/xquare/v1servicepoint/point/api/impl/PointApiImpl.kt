@@ -2,6 +2,7 @@ package com.xquare.v1servicepoint.point.api.impl
 
 import com.xquare.v1servicepoint.annotation.UseCase
 import com.xquare.v1servicepoint.point.api.PointApi
+import com.xquare.v1servicepoint.point.api.dto.request.DomainUpdatePointRoleRequest
 import com.xquare.v1servicepoint.point.api.dto.request.DomainSavePointRoleRequest
 import com.xquare.v1servicepoint.point.api.dto.response.PointStatusResponse
 import com.xquare.v1servicepoint.point.exception.PointNotFoundException
@@ -27,6 +28,19 @@ class PointApiImpl(
             goodPoint = getUserPointStatus.goodPoint,
             badPoint = getUserPointStatus.badPoint,
         )
+    }
+
+    override suspend fun updatePointRole(pointId: UUID, request: DomainUpdatePointRoleRequest) {
+        val point = pointSpi.findByPointId(pointId)
+            ?: throw PointNotFoundException(PointNotFoundException.POINT_NOT_FOUND)
+
+        val updatedPoint = point.updatePointRole(
+            reason = request.reason,
+            type = request.type,
+            point = request.point,
+        )
+
+        pointSpi.applyPointChanges(updatedPoint)
     }
 
     override suspend fun deletePointRole(pointId: UUID) {

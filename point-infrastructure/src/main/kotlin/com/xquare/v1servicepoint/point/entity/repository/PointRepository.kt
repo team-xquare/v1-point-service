@@ -36,6 +36,15 @@ class PointRepository(
         }
     }
 
+    override suspend fun applyPointChanges(point: Point): Point {
+        val pointEntity = pointMapper.pointDomainToEntity(point)
+        val updatePointEntity = reactiveQueryFactory.transactionWithFactory { session, _ ->
+            session.mergePointEntity(pointEntity)
+        }
+
+        return pointMapper.pointEntityToDomain(updatePointEntity)
+    }
+
     override suspend fun deletePointRole(pointId: UUID) {
         reactiveQueryFactory.withFactory { _, reactiveQueryFactory ->
             reactiveQueryFactory.deletePointRoleIn(pointId)
@@ -47,6 +56,9 @@ class PointRepository(
             where(col(PointEntity::id).`in`(pointId))
         }
     }
+
+    private suspend fun Mutiny.Session.mergePointEntity(pointEntity: PointEntity) =
+        this.merge(pointEntity).awaitSuspending()
 
     override suspend fun savePointRole(point: Point) {
         val pointEntity = pointMapper.pointDomainToEntity(point)

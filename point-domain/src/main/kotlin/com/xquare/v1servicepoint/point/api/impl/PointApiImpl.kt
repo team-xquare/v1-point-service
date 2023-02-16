@@ -38,8 +38,14 @@ class PointApiImpl(
             pointHistorySpi.deleteByIdAndUserId(it)
 
             when (point.type) {
-                true -> pointStatus?.minusGoodPoint(point.point)
-                false -> pointStatus?.minusBadPoint(point.point)
+                true -> {
+                    val minusGoodPoint = pointStatus?.minusGoodPoint(point.point)
+                    pointStatusSpi.applyPointHistoryChanges(minusGoodPoint!!)
+                }
+                false -> {
+                    val minusBadPoint = pointStatus?.minusBadPoint(point.point)
+                    pointStatusSpi.applyPointHistoryChanges(minusBadPoint!!)
+                }
             }
         }
         pointSpi.deletePointRole(point.id)

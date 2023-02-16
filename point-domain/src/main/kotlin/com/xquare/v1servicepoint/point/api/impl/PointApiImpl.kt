@@ -30,10 +30,12 @@ class PointApiImpl(
         val point = pointSpi.findByPointId(pointId)
             ?: throw PointNotFoundException((PointNotFoundException.POINT_NOT_FOUND))
 
-        point.updatePointRole(
+        val updatePoint = point.updatePointRole(
             reason = request.reason,
             type = request.type,
             point = request.point,
         )
+
+        pointSpi.applyPointChanges(updatePoint)
     }
 }

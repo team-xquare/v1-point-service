@@ -13,4 +13,6 @@ interface PointRepositorySpi {
     suspend fun deletePointRole(pointId: UUID)
 
     suspend fun savePointRole(point: Point)
+
+    suspend fun findAllByType(type: Boolean): List<Point>
 }

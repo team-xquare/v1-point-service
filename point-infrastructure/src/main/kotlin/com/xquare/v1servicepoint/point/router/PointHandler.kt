@@ -105,4 +105,11 @@ class PointHandler(
         type = this.type,
         point = this.point,
     )
+
+    suspend fun queryPointRuleList(serverRequest: ServerRequest): ServerResponse {
+        val type = serverRequest.queryParam("type").orElse("")
+
+        pointApi.queryPointRoleList(type.toBoolean())
+        return ServerResponse.ok().buildAndAwait()
+    }
 }

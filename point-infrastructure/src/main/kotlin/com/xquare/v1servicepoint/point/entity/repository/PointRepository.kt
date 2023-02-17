@@ -2,6 +2,7 @@ package com.xquare.v1servicepoint.point.entity.repository
 
 import com.linecorp.kotlinjdsl.ReactiveQueryFactory
 import com.linecorp.kotlinjdsl.deleteQuery
+import com.linecorp.kotlinjdsl.listQuery
 import com.linecorp.kotlinjdsl.query.HibernateMutinyReactiveQueryFactory
 import com.linecorp.kotlinjdsl.querydsl.expression.col
 import com.linecorp.kotlinjdsl.singleQueryOrNull
@@ -69,4 +70,21 @@ class PointRepository(
 
     private suspend fun Mutiny.Session.persistPointEntityConcurrently(point: PointEntity) =
         this@persistPointEntityConcurrently.persist(point).awaitSuspending()
+
+    override suspend fun findAllByType(type: Boolean): List<Point> {
+        val pointEntityList = reactiveQueryFactory.withFactory { _, reactiveQueryFactory ->
+            reactiveQueryFactory.findAllByTypeIn(type)
+        }
+
+        return pointEntityList.map { pointMapper.pointEntityToDomain(it) }
+    }
+
+    private suspend fun ReactiveQueryFactory.findAllByTypeIn(type: Boolean): List<PointEntity> {
+        return this.listQuery<PointEntity> {
+            select(entity(PointEntity::class))
+            from(entity(PointEntity::class))
+            where(col(PointEntity::type).`in`(type))
+            orderBy(col(PointEntity::point).asc())
+        }
+    }
 }

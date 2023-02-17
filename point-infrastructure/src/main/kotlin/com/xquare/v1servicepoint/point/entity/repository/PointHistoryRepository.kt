@@ -97,7 +97,8 @@ class PointHistoryRepository(
             from(entity(PointHistoryEntity::class))
             join(PointHistoryEntity::point, JoinType.LEFT)
             where(
-                col(PointHistoryEntity::userId).equal(userId).and(col(PointEntity::type).equal(type)),
+                col(PointHistoryEntity::userId).equal(userId)
+                    .and(col(PointEntity::type).equal(type)),
             )
         }
     }

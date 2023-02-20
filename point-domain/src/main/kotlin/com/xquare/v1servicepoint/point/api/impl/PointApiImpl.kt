@@ -10,6 +10,7 @@ import com.xquare.v1servicepoint.point.exception.UserNotFoundException
 import com.xquare.v1servicepoint.point.spi.PointSpi
 import com.xquare.v1servicepoint.point.spi.PointStatusSpi
 import com.xquare.v1servicepoint.point.Point
+import com.xquare.v1servicepoint.point.api.dto.response.PointRuleListResponse
 import com.xquare.v1servicepoint.point.spi.PointHistorySpi
 import java.util.UUID
 
@@ -75,5 +76,10 @@ class PointApiImpl(
             point = request.point,
         )
         pointSpi.savePointRole(point)
+    }
+
+    override suspend fun queryPointRoleList(type: Boolean): PointRuleListResponse {
+        val pointList = pointSpi.findAllByType(type)
+        return PointRuleListResponse(pointList)
     }
 }

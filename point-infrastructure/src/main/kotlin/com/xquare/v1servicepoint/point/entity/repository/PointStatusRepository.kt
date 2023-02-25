@@ -4,7 +4,9 @@ import com.linecorp.kotlinjdsl.ReactiveQueryFactory
 import com.linecorp.kotlinjdsl.query.HibernateMutinyReactiveQueryFactory
 import com.linecorp.kotlinjdsl.querydsl.expression.col
 import com.linecorp.kotlinjdsl.selectQuery
+import com.xquare.v1servicepoint.point.Point
 import com.xquare.v1servicepoint.point.PointStatus
+import com.xquare.v1servicepoint.point.entity.PointEntity
 import com.xquare.v1servicepoint.point.entity.PointStatusEntity
 import com.xquare.v1servicepoint.point.mapper.PointStatusMapper
 import com.xquare.v1servicepoint.point.spi.PointStatusSpi
@@ -45,4 +47,15 @@ class PointStatusRepository(
 
     private suspend fun Mutiny.Session.mergePointStatusEntity(pointStatusEntity: PointStatusEntity) =
         this.merge(pointStatusEntity).awaitSuspending()
+
+
+    override suspend fun savePointStatus(pointStatus: PointStatus) {
+        val pointStatusEntity = pointStatusMapper.pointStatusDomainToEntity(pointStatus)
+        reactiveQueryFactory.transactionWithFactory { session, _ ->
+            session.persistPointStatusEntityConcurrently(pointStatusEntity)
+        }
+    }
+
+    private suspend fun Mutiny.Session.persistPointStatusEntityConcurrently(pointStatusEntity: PointStatusEntity) =
+        this@persistPointStatusEntityConcurrently.persist(pointStatusEntity).awaitSuspending()
 }

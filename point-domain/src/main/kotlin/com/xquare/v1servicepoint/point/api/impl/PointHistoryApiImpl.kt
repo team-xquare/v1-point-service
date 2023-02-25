@@ -1,6 +1,7 @@
 package com.xquare.v1servicepoint.point.api.impl
 
 import com.xquare.v1servicepoint.annotation.UseCase
+import com.xquare.v1servicepoint.point.PointStatus
 import com.xquare.v1servicepoint.point.api.PointHistoryApi
 import com.xquare.v1servicepoint.point.api.dto.request.DomainGivePointUserRequest
 import com.xquare.v1servicepoint.point.api.dto.response.PointHistoryListResponse
@@ -55,5 +56,16 @@ class PointHistoryApiImpl(
     override suspend fun queryUserPointHistory(userId: UUID, type: Boolean): PointHistoryListResponse {
         val pointHistoryList = pointHistorySpi.findAllByUserIdAndType(userId, type)
         return PointHistoryListResponse(pointHistoryList)
+    }
+
+    override suspend fun savePointStatus(userId: UUID) {
+        val pointStatus = PointStatus(
+            userId = userId,
+            goodPoint = 0,
+            badPoint = 0,
+            penaltyLevel = 0,
+            isPenaltyRequired = false,
+        )
+        pointStatusSpi.savePointStatus(pointStatus)
     }
 }

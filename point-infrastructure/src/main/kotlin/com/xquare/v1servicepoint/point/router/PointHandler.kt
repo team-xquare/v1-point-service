@@ -112,4 +112,11 @@ class PointHandler(
         pointApi.queryPointRoleList(type.toBoolean())
         return ServerResponse.ok().buildAndAwait()
     }
+
+    suspend fun savePointStatus(serverRequest: ServerRequest): ServerResponse {
+        val userId = serverRequest.headers().firstHeader("Request-User-Id")
+            ?: throw UnAuthorizedException("UnAuthorized")
+        pointHistoryApi.savePointStatus(UUID.fromString(userId))
+        return ServerResponse.created(URI("/")).buildAndAwait()
+    }
 }

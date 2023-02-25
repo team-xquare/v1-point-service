@@ -10,4 +10,6 @@ interface PointHistoryApi {
     suspend fun deleteUserPoint(studentId: UUID, historyId: UUID)
 
     suspend fun queryUserPointHistory(userId: UUID, type: Boolean): PointHistoryListResponse
+
+    suspend fun savePointStatus(userId: UUID)
 }

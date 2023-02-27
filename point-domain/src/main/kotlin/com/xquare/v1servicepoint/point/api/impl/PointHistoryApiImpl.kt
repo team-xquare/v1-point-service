@@ -60,8 +60,9 @@ class PointHistoryApiImpl(
     }
 
     override suspend fun savePointStatus(userId: UUID) {
-        pointStatusSpi.findByUserId(userId)
-            ?: throw UserExistException(UserExistException.USER_ID_EXIST)
+        pointStatusSpi.findByUserId(userId)?.run {
+            throw UserExistException(UserExistException.USER_ID_EXIST)
+        }
 
         val pointStatus = PointStatus(
             userId = userId,

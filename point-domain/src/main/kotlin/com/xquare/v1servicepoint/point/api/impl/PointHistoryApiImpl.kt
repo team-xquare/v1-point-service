@@ -7,6 +7,7 @@ import com.xquare.v1servicepoint.point.api.dto.request.DomainGivePointUserReques
 import com.xquare.v1servicepoint.point.api.dto.response.PointHistoryListResponse
 import com.xquare.v1servicepoint.point.exception.PointHistoryNotFoundException
 import com.xquare.v1servicepoint.point.exception.PointNotFoundException
+import com.xquare.v1servicepoint.point.exception.UserExistException
 import com.xquare.v1servicepoint.point.exception.UserNotFoundException
 import com.xquare.v1servicepoint.point.spi.PointHistorySpi
 import com.xquare.v1servicepoint.point.spi.PointSpi
@@ -59,6 +60,9 @@ class PointHistoryApiImpl(
     }
 
     override suspend fun savePointStatus(userId: UUID) {
+        pointStatusSpi.findByUserId(userId)
+            ?: throw UserExistException(UserExistException.USER_ID_EXIST)
+
         val pointStatus = PointStatus(
             userId = userId,
             goodPoint = 0,

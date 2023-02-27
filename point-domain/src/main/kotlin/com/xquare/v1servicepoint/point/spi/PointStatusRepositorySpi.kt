@@ -9,4 +9,6 @@ interface PointStatusRepositorySpi {
 
     suspend fun findByUserId(userId: UUID): PointStatus?
     suspend fun applyPointHistoryChanges(pointStatus: PointStatus): PointStatus
+
+    suspend fun savePointStatus(pointStatus: PointStatus)
 }

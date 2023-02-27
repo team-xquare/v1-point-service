@@ -45,4 +45,14 @@ class PointStatusRepository(
 
     private suspend fun Mutiny.Session.mergePointStatusEntity(pointStatusEntity: PointStatusEntity) =
         this.merge(pointStatusEntity).awaitSuspending()
+
+    override suspend fun savePointStatus(pointStatus: PointStatus) {
+        val pointStatusEntity = pointStatusMapper.pointStatusDomainToEntity(pointStatus)
+        reactiveQueryFactory.transactionWithFactory { session, _ ->
+            session.persistPointStatusEntityConcurrently(pointStatusEntity)
+        }
+    }
+
+    private suspend fun Mutiny.Session.persistPointStatusEntityConcurrently(pointStatusEntity: PointStatusEntity) =
+        this@persistPointStatusEntityConcurrently.persist(pointStatusEntity).awaitSuspending()
 }

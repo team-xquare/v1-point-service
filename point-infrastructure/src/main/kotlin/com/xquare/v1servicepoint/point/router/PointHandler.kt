@@ -109,7 +109,15 @@ class PointHandler(
     suspend fun queryPointRuleList(serverRequest: ServerRequest): ServerResponse {
         val type = serverRequest.queryParam("type").orElse("")
 
-        pointApi.queryPointRoleList(type.toBoolean())
-        return ServerResponse.ok().buildAndAwait()
+        val pointRuleListResponse = pointApi.queryPointRoleList(type.toBoolean())
+        return ServerResponse.ok().bodyValueAndAwait(pointRuleListResponse)
+    }
+
+    suspend fun savePointStatus(serverRequest: ServerRequest): ServerResponse {
+        val userId = serverRequest.headers().firstHeader("Request-User-Id")
+            ?: throw UnAuthorizedException("UnAuthorized")
+
+        pointHistoryApi.savePointStatus(UUID.fromString(userId))
+        return ServerResponse.created(URI("/")).buildAndAwait()
     }
 }

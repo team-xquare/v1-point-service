@@ -4,16 +4,14 @@ import com.linecorp.kotlinjdsl.ReactiveQueryFactory
 import com.linecorp.kotlinjdsl.query.HibernateMutinyReactiveQueryFactory
 import com.linecorp.kotlinjdsl.querydsl.expression.col
 import com.linecorp.kotlinjdsl.selectQuery
-import com.xquare.v1servicepoint.point.Point
 import com.xquare.v1servicepoint.point.PointStatus
-import com.xquare.v1servicepoint.point.entity.PointEntity
 import com.xquare.v1servicepoint.point.entity.PointStatusEntity
 import com.xquare.v1servicepoint.point.mapper.PointStatusMapper
 import com.xquare.v1servicepoint.point.spi.PointStatusSpi
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import org.hibernate.reactive.mutiny.Mutiny
 import org.springframework.stereotype.Repository
-import java.util.UUID
+import java.util.*
 
 @Repository
 class PointStatusRepository(

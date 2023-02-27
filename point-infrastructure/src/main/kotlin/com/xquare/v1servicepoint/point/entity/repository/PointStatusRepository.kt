@@ -11,7 +11,7 @@ import com.xquare.v1servicepoint.point.spi.PointStatusSpi
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import org.hibernate.reactive.mutiny.Mutiny
 import org.springframework.stereotype.Repository
-import java.util.*
+import java.util.UUID
 
 @Repository
 class PointStatusRepository(
@@ -45,7 +45,6 @@ class PointStatusRepository(
 
     private suspend fun Mutiny.Session.mergePointStatusEntity(pointStatusEntity: PointStatusEntity) =
         this.merge(pointStatusEntity).awaitSuspending()
-
 
     override suspend fun savePointStatus(pointStatus: PointStatus) {
         val pointStatusEntity = pointStatusMapper.pointStatusDomainToEntity(pointStatus)

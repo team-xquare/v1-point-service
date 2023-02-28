@@ -64,6 +64,15 @@ class PointHandler(
         return ServerResponse.ok().bodyValueAndAwait(pointHistoryListResponse)
     }
 
+    suspend fun queryUserPointHistoryForStudent(serverRequest: ServerRequest): ServerResponse {
+        val userId = serverRequest.headers().firstHeader("Requset-User-Id")
+            ?: throw UnAuthorizedException("UnAuthorized")
+        val type = serverRequest.queryParam("type").orElse("")
+
+        val pointHistoryListResponse = pointHistoryApi.queryUserPointHistory(UUID.fromString(userId), type.toBoolean())
+        return ServerResponse.ok().bodyValueAndAwait(pointHistoryListResponse)
+    }
+
     suspend fun updatePointRole(serverRequest: ServerRequest): ServerResponse {
         val pointId = serverRequest.pathVariable("point-id")
         val updatePointRoleRequest = serverRequest.getUpdatePointRequestBody()

@@ -25,7 +25,7 @@ class PointHandler(
     private val pointHistoryApi: PointHistoryApi,
 ) {
     suspend fun queryUserPointStatus(serverRequest: ServerRequest): ServerResponse {
-        val userId = serverRequest.headers().firstHeader("Request-User-Id")
+        val userId = serverRequest.pathVariable("user-id")
             ?: throw UnAuthorizedException("UnAuthorized")
 
         val pointStatus = pointApi.queryPointStatus(UUID.fromString(userId))
@@ -114,7 +114,7 @@ class PointHandler(
     }
 
     suspend fun savePointStatus(serverRequest: ServerRequest): ServerResponse {
-        val userId = serverRequest.headers().firstHeader("Request-User-Id")
+        val userId = serverRequest.pathVariable("user-id")
             ?: throw UnAuthorizedException("UnAuthorized")
 
         pointHistoryApi.savePointStatus(UUID.fromString(userId))

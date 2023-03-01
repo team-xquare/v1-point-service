@@ -67,7 +67,7 @@ class PointHandler(
     suspend fun queryUserPointHistoryForStudent(serverRequest: ServerRequest): ServerResponse {
         val userId = serverRequest.headers().firstHeader("Requset-User-Id")
             ?: throw UnAuthorizedException("UnAuthorized")
-        
+
         val type = serverRequest.queryParam("type").orElse("")
 
         val pointHistoryListForStudentResponse = pointHistoryApi.queryUserPointHistoryForStudent(UUID.fromString(userId), type.toBoolean())

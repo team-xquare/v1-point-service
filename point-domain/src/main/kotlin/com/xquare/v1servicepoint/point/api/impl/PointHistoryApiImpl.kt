@@ -69,7 +69,7 @@ class PointHistoryApiImpl(
         return PointHistoryListStudentResponse(
             goodPoint = getUserPointStatus.goodPoint,
             badPoint = getUserPointStatus.badPoint,
-            pointHistories = pointHistoryList
+            pointHistories = pointHistoryList,
         )
     }
 

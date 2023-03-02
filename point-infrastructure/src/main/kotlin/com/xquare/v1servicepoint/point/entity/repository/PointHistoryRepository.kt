@@ -78,8 +78,18 @@ class PointHistoryRepository(
     }
 
     override suspend fun findAllByUserIdAndType(userId: UUID, type: Boolean): List<PointHistoryElement> {
-        return reactiveQueryFactory.transactionWithFactory { _, reactiveQueryFactory ->
+        val pointHistory = reactiveQueryFactory.transactionWithFactory { _, reactiveQueryFactory ->
             reactiveQueryFactory.findAllByUserIdAndType(userId, type)
+        }
+
+        return pointHistory.map {
+            PointHistoryElement(
+                id = it.id,
+                date = it.date,
+                reason = it.reason,
+                pointType = it.pointType,
+                point = it.point,
+            )
         }
     }
 
@@ -89,9 +99,9 @@ class PointHistoryRepository(
                 listOf(
                     col(PointHistoryEntity::id),
                     col(PointHistoryEntity::date),
-                    col(PointHistoryEntity::userId),
-                    col(PointHistoryEntity::point),
+                    col(PointEntity::reason),
                     col(PointEntity::type),
+                    col(PointEntity::point),
                 ),
             )
             from(entity(PointHistoryEntity::class))

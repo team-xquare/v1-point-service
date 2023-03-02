@@ -12,10 +12,10 @@ class PointRouter {
     fun userBaseRouter(pointHandler: PointHandler) = coRouter {
         "/points".nest {
             contentType(MediaType.APPLICATION_JSON)
-            GET("/{student-id}", pointHandler::queryUserPointStatus)
+            GET("/student/{student-id}", pointHandler::queryUserPointStatus)
             POST("/student/{student-id}", pointHandler::saveUserPoint)
             DELETE("/student/{student-id}/history/{history-id}", pointHandler::deleteUserPoint)
-            GET("/{student-id}/history", pointHandler::queryUserPointHistory)
+            GET("/student/{student-id}/history", pointHandler::queryUserPointHistory)
             GET("/history", pointHandler::queryUserPointHistoryForStudent)
             PUT("/rule/{point-id}", pointHandler::updatePointRole)
             DELETE("/rule/{point-id}", pointHandler::deletePointRole)

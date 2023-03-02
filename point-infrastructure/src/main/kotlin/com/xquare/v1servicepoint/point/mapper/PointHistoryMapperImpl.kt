@@ -21,7 +21,7 @@ class PointHistoryMapperImpl(
     }
 
     override suspend fun pointHistoryDomainToEntity(pointHistory: PointHistory): PointHistoryEntity {
-        val point = pointSpi.findByPointId(pointHistory.id)
+        val point = pointSpi.findByPointId(pointHistory.pointId)
             ?: throw PointNotFoundException(PointNotFoundException.POINT_NOT_FOUND)
 
         return PointHistoryEntity(

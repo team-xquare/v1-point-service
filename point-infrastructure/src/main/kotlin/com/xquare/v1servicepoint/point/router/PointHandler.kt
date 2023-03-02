@@ -69,8 +69,8 @@ class PointHandler(
             ?: throw UnAuthorizedException("UnAuthorized")
         val type = serverRequest.queryParam("type").orElse("")
 
-        val pointHistoryListResponse = pointHistoryApi.queryUserPointHistory(UUID.fromString(userId), type.toBoolean())
-        return ServerResponse.ok().bodyValueAndAwait(pointHistoryListResponse)
+        val pointHistoryListForStudentResponse = pointHistoryApi.queryUserPointHistoryForStudent(UUID.fromString(userId), type.toBoolean())
+        return ServerResponse.ok().bodyValueAndAwait(pointHistoryListForStudentResponse)
     }
 
     suspend fun updatePointRole(serverRequest: ServerRequest): ServerResponse {

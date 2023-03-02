@@ -5,6 +5,7 @@ import com.xquare.v1servicepoint.point.PointStatus
 import com.xquare.v1servicepoint.point.api.PointHistoryApi
 import com.xquare.v1servicepoint.point.api.dto.request.DomainGivePointUserRequest
 import com.xquare.v1servicepoint.point.api.dto.response.PointHistoryListResponse
+import com.xquare.v1servicepoint.point.api.dto.response.PointHistoryListStudentResponse
 import com.xquare.v1servicepoint.point.exception.PointHistoryNotFoundException
 import com.xquare.v1servicepoint.point.exception.PointNotFoundException
 import com.xquare.v1servicepoint.point.exception.UserExistException
@@ -57,6 +58,19 @@ class PointHistoryApiImpl(
     override suspend fun queryUserPointHistory(userId: UUID, type: Boolean): PointHistoryListResponse {
         val pointHistoryList = pointHistorySpi.findAllByUserIdAndType(userId, type)
         return PointHistoryListResponse(pointHistoryList)
+    }
+
+    override suspend fun queryUserPointHistoryForStudent(userId: UUID, type: Boolean): PointHistoryListStudentResponse {
+        val getUserPointStatus = pointStatusSpi.findByUserId(userId)
+            ?: throw UserNotFoundException(UserNotFoundException.USER_ID_NOT_FOUND)
+
+        val pointHistoryList = pointHistorySpi.findAllByUserIdAndType(userId, type)
+
+        return PointHistoryListStudentResponse(
+            goodPoint = getUserPointStatus.goodPoint,
+            badPoint = getUserPointStatus.badPoint,
+            pointHistories = pointHistoryList,
+        )
     }
 
     override suspend fun savePointStatus(userId: UUID) {

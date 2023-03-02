@@ -77,7 +77,7 @@ class PointHistoryRepository(
         }.executeUpdate()
     }
 
-    override suspend fun findAllByUserIdAndType(userId: UUID, type: Boolean): List<PointHistoryElement> {
+    override suspend fun findAllByUserIdAndType(userId: UUID, type: Boolean?): List<PointHistoryElement> {
         val pointHistory = reactiveQueryFactory.transactionWithFactory { _, reactiveQueryFactory ->
             reactiveQueryFactory.findAllByUserIdAndType(userId, type)
         }
@@ -93,7 +93,10 @@ class PointHistoryRepository(
         }
     }
 
-    private suspend fun ReactiveQueryFactory.findAllByUserIdAndType(userId: UUID, type: Boolean): List<PointHistoryElement> {
+    private suspend fun ReactiveQueryFactory.findAllByUserIdAndType(
+        userId: UUID,
+        type: Boolean?,
+    ): List<PointHistoryElement> {
         return this.listQuery {
             select(
                 listOf(
@@ -107,8 +110,10 @@ class PointHistoryRepository(
             from(entity(PointHistoryEntity::class))
             join(PointHistoryEntity::point, JoinType.LEFT)
             where(
-                col(PointHistoryEntity::userId).equal(userId)
-                    .and(col(PointEntity::type).equal(type)),
+                and(
+                    col(PointHistoryEntity::userId).equal(userId),
+                    type?.let { col(PointEntity::type).equal(type) },
+                )
             )
         }
     }

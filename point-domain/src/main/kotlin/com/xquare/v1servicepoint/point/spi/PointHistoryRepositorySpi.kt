@@ -13,7 +13,7 @@ interface PointHistoryRepositorySpi {
 
     suspend fun deleteByIdAndUserId(pointHistory: PointHistory)
 
-    suspend fun findAllByUserIdAndType(userId: UUID, type: Boolean): List<PointHistoryElement>
+    suspend fun findAllByUserIdAndType(userId: UUID, type: Boolean?): List<PointHistoryElement>
 
     suspend fun findAllByPointId(pointId: UUID): List<PointHistory>
 }

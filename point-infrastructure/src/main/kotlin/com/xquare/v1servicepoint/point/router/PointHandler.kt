@@ -60,7 +60,7 @@ class PointHandler(
         val userId = serverRequest.pathVariable("student-id")
         val type = serverRequest.queryParam("type").orElse("")
 
-        val pointHistoryListResponse = pointHistoryApi.queryUserPointHistory(UUID.fromString(userId), type.toBoolean())
+        val pointHistoryListResponse = pointHistoryApi.queryUserPointHistory(UUID.fromString(userId), type)
         return ServerResponse.ok().bodyValueAndAwait(pointHistoryListResponse)
     }
 
@@ -69,7 +69,7 @@ class PointHandler(
             ?: throw UnAuthorizedException("UnAuthorized")
         val type = serverRequest.queryParam("type").orElse("")
 
-        val pointHistoryListForStudentResponse = pointHistoryApi.queryUserPointHistoryForStudent(UUID.fromString(userId), type.toBoolean())
+        val pointHistoryListForStudentResponse = pointHistoryApi.queryUserPointHistoryForStudent(UUID.fromString(userId), type)
         return ServerResponse.ok().bodyValueAndAwait(pointHistoryListForStudentResponse)
     }
 

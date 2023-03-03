@@ -8,7 +8,7 @@ import java.util.UUID
 interface PointStatusRepositorySpi {
 
     suspend fun findByUserId(userId: UUID): PointStatus?
-    suspend fun applyPointHistoryChanges(pointStatus: PointStatus): PointStatus
+    suspend fun applyPointStatusChanges(pointStatus: PointStatus): PointStatus
 
     suspend fun savePointStatus(pointStatus: PointStatus)
 }

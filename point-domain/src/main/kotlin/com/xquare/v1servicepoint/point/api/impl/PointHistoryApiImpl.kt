@@ -48,8 +48,14 @@ class PointHistoryApiImpl(
             ?: throw UserNotFoundException(UserNotFoundException.USER_ID_NOT_FOUND)
 
         when (getPointByPointId.type) {
-            true -> pointStatus.minusGoodPoint(getPointByPointId.point)
-            false -> pointStatus.minusBadPoint(getPointByPointId.point)
+            true -> {
+                val minusGoodPoint = pointStatus.minusGoodPoint(getPointByPointId.point)
+                pointStatusSpi.applyPointStatusChanges(minusGoodPoint)
+            }
+            false -> {
+                val minusBadPoint = pointStatus.minusBadPoint(getPointByPointId.point)
+                pointStatusSpi.applyPointStatusChanges(minusBadPoint)
+            }
         }
 
         pointHistorySpi.deleteByIdAndUserId(pointHistory)

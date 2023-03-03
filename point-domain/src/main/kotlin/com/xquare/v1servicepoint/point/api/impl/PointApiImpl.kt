@@ -49,19 +49,19 @@ class PointApiImpl(
             ?: throw PointNotFoundException(PointNotFoundException.POINT_NOT_FOUND)
         val userPointHistory = pointHistorySpi.findAllByPointId(point.id)
 
-        val pointStatus = pointStatusSpi.findByUserId(userPointHistory.first().userId)
 
         userPointHistory.forEach {
+            val pointStatus = pointStatusSpi.findByUserId(it.userId)
             pointHistorySpi.deleteByIdAndUserId(it)
 
             when (point.type) {
                 true -> {
                     val minusGoodPoint = pointStatus?.minusGoodPoint(point.point)
-                    pointStatusSpi.applyPointHistoryChanges(minusGoodPoint!!)
+                    pointStatusSpi.applyPointStatusChanges(minusGoodPoint!!)
                 }
                 false -> {
                     val minusBadPoint = pointStatus?.minusBadPoint(point.point)
-                    pointStatusSpi.applyPointHistoryChanges(minusBadPoint!!)
+                    pointStatusSpi.applyPointStatusChanges(minusBadPoint!!)
                 }
             }
         }

@@ -34,7 +34,7 @@ class PointStatusRepository(
         }.singleResult()
     }
 
-    override suspend fun applyPointHistoryChanges(pointStatus: PointStatus): PointStatus {
+    override suspend fun applyPointStatusChanges(pointStatus: PointStatus): PointStatus {
         val pointStatusEntity = pointStatusMapper.pointStatusDomainToEntity(pointStatus)
         val updatePointStatusEntity = reactiveQueryFactory.transactionWithFactory { session, _ ->
             session.mergePointStatusEntity(pointStatusEntity)

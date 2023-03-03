@@ -72,7 +72,8 @@ class PointHistoryRepository(
     private suspend fun ReactiveQueryFactory.deleteWithIdAndUserId(id: UUID, studentId: UUID) {
         this.deleteQuery<PointHistoryEntity> {
             where(
-                col(PointHistoryEntity::id).equal(id).and(col(PointHistoryEntity::userId).equal(studentId)),
+                col(PointHistoryEntity::id).equal(id)
+                    .and(col(PointHistoryEntity::userId).equal(studentId)),
             )
         }.executeUpdate()
     }

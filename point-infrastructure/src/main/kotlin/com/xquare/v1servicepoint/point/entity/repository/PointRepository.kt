@@ -55,7 +55,7 @@ class PointRepository(
     private suspend fun ReactiveQueryFactory.deletePointRoleIn(pointId: UUID) {
         this.deleteQuery<PointEntity> {
             where(col(PointEntity::id).`in`(pointId))
-        }
+        }.executeUpdate()
     }
 
     private suspend fun Mutiny.Session.mergePointEntity(pointEntity: PointEntity) =

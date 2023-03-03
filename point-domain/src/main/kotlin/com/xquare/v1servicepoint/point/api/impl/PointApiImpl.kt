@@ -49,7 +49,6 @@ class PointApiImpl(
             ?: throw PointNotFoundException(PointNotFoundException.POINT_NOT_FOUND)
         val userPointHistory = pointHistorySpi.findAllByPointId(point.id)
 
-
         userPointHistory.forEach {
             val pointStatus = pointStatusSpi.findByUserId(it.userId)
             pointHistorySpi.deleteByIdAndUserId(it)

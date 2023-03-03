@@ -38,7 +38,7 @@ class PointHandler(
         val domainRequest = savePointUserRequest.toDomainRequest()
 
         pointHistoryApi.saveUserPoint(UUID.fromString(userId), domainRequest)
-        return ServerResponse.created(URI("/points/student/{student-id}")).buildAndAwait()
+        return ServerResponse.created(URI("/points/student")).buildAndAwait()
     }
 
     private suspend fun ServerRequest.getSavePointRequestBody() =

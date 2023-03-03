@@ -23,9 +23,9 @@ class PointHistoryEntity(
     val date: LocalDate,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "point_id", nullable = false)
+    @JoinColumn(name = "point_id")
     val point: PointEntity,
 
     @Column(columnDefinition = "BINARY(16)", nullable = false)
-    val userId: UUID
-)
+    val userId: UUID,
+    )

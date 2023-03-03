@@ -4,6 +4,7 @@ import com.linecorp.kotlinjdsl.ReactiveQueryFactory
 import com.linecorp.kotlinjdsl.query.HibernateMutinyReactiveQueryFactory
 import com.linecorp.kotlinjdsl.querydsl.expression.col
 import com.linecorp.kotlinjdsl.selectQuery
+import com.linecorp.kotlinjdsl.singleQueryOrNull
 import com.xquare.v1servicepoint.point.PointStatus
 import com.xquare.v1servicepoint.point.entity.PointStatusEntity
 import com.xquare.v1servicepoint.point.mapper.PointStatusMapper
@@ -27,11 +28,11 @@ class PointStatusRepository(
     }
 
     private suspend fun ReactiveQueryFactory.findByUserIdIn(id: UUID): PointStatusEntity? {
-        return this.selectQuery<PointStatusEntity> {
+        return this.singleQueryOrNull<PointStatusEntity> {
             select(entity(PointStatusEntity::class))
             from(entity(PointStatusEntity::class))
             where(col(PointStatusEntity::userId).`in`(id))
-        }.singleResult()
+        }
     }
 
     override suspend fun applyPointStatusChanges(pointStatus: PointStatus): PointStatus {

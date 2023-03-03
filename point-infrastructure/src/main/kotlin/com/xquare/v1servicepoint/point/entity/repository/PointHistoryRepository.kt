@@ -35,7 +35,7 @@ class PointHistoryRepository(
     override suspend fun saveUserPoint(userId: UUID, pointId: UUID) {
         val pointDomainToSave = pointHistoryMapper.pointHistoryDomainToEntity(
             PointHistory(
-                id = UuidCreator.getTimeOrderedEpoch(),
+                id = UUID.randomUUID(),
                 date = LocalDate.now(),
                 userId = userId,
                 pointId = pointId,

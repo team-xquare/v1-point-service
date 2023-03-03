@@ -76,8 +76,8 @@ class PointHistoryApiImpl(
 
     private fun convertType(type: String): Boolean? {
         return when (type) {
-            "true" -> true
-            "false" -> false
+            "GOODPOINT" -> true
+            "BADPOINT" -> false
             else -> null
         }
     }

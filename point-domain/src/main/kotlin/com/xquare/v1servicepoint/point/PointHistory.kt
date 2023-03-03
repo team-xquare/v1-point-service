@@ -12,5 +12,5 @@ data class PointHistory(
 
     val pointId: UUID,
 
-    val userId: UUID
+    val userId: UUID,
 )

@@ -9,5 +9,6 @@
         <class>com.xquare.v1servicepoint.point.entity.PointEntity</class>
         <class>com.xquare.v1servicepoint.point.entity.PointHistoryEntity</class>
         <class>com.xquare.v1servicepoint.point.entity.PointStatusEntity</class>
+        <exclude-unlisted-classes>false</exclude-unlisted-classes>
     </persistence-unit>
 </persistence>

@@ -14,7 +14,9 @@ import com.xquare.v1servicepoint.point.api.dto.response.PointHistoryElement
 import com.xquare.v1servicepoint.point.entity.PointEntity
 import com.xquare.v1servicepoint.point.entity.PointHistoryEntity
 import com.xquare.v1servicepoint.point.mapper.PointHistoryMapper
+import com.xquare.v1servicepoint.point.mapper.PointMapper
 import com.xquare.v1servicepoint.point.spi.PointHistorySpi
+import com.xquare.v1servicepoint.point.spi.PointSpi
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import org.hibernate.reactive.mutiny.Mutiny
 import org.springframework.stereotype.Repository
@@ -26,12 +28,14 @@ import javax.persistence.criteria.JoinType
 class PointHistoryRepository(
     private val reactiveQueryFactory: HibernateMutinyReactiveQueryFactory,
     private val pointHistoryMapper: PointHistoryMapper,
+    private val pointSpi: PointSpi,
+    private val pointMapper: PointMapper,
 ) : PointHistorySpi {
 
     override suspend fun saveUserPoint(userId: UUID, pointId: UUID) {
         val pointDomainToSave = pointHistoryMapper.pointHistoryDomainToEntity(
             PointHistory(
-                id = UuidCreator.getTimeOrderedEpoch(),
+                id = UUID.randomUUID(),
                 date = LocalDate.now(),
                 userId = userId,
                 pointId = pointId,

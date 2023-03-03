@@ -30,8 +30,14 @@ class PointHistoryApiImpl(
             ?: throw UserNotFoundException(UserNotFoundException.USER_ID_NOT_FOUND)
 
         when (getPointByPointId.type) {
-            true -> pointStatus.addGoodPoint(getPointByPointId.point)
-            false -> pointStatus.addBadPoint(getPointByPointId.point)
+            true -> {
+                val addGoodPoint = pointStatus.addGoodPoint(getPointByPointId.point)
+                pointStatusSpi.applyPointStatusChanges(addGoodPoint)
+            }
+            false -> {
+                val addBadPoint = pointStatus.addBadPoint(getPointByPointId.point)
+                pointStatusSpi.applyPointStatusChanges(addBadPoint)
+            }
         }
 
         pointHistorySpi.saveUserPoint(userId, getPointByPointId.id)

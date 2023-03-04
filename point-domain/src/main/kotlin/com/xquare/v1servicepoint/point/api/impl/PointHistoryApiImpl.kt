@@ -4,6 +4,7 @@ import com.xquare.v1servicepoint.annotation.UseCase
 import com.xquare.v1servicepoint.point.PointStatus
 import com.xquare.v1servicepoint.point.api.PointHistoryApi
 import com.xquare.v1servicepoint.point.api.dto.request.DomainGivePointUserRequest
+import com.xquare.v1servicepoint.point.api.dto.response.ExportUserPointStatusResponse
 import com.xquare.v1servicepoint.point.api.dto.response.PointHistoryListResponse
 import com.xquare.v1servicepoint.point.api.dto.response.PointHistoryListStudentResponse
 import com.xquare.v1servicepoint.point.exception.PointHistoryNotFoundException
@@ -11,9 +12,12 @@ import com.xquare.v1servicepoint.point.exception.PointNotFoundException
 import com.xquare.v1servicepoint.point.exception.UserExistException
 import com.xquare.v1servicepoint.point.exception.UserNotFoundException
 import com.xquare.v1servicepoint.point.exception.UserPenaltyExistException
+import com.xquare.v1servicepoint.point.spi.ExcelSpi
 import com.xquare.v1servicepoint.point.spi.PointHistorySpi
 import com.xquare.v1servicepoint.point.spi.PointSpi
 import com.xquare.v1servicepoint.point.spi.PointStatusSpi
+import java.nio.charset.Charset
+import java.time.LocalDate
 import java.util.UUID
 
 @UseCase
@@ -21,6 +25,7 @@ class PointHistoryApiImpl(
     private val pointHistorySpi: PointHistorySpi,
     private val pointSpi: PointSpi,
     private val pointStatusSpi: PointStatusSpi,
+    private val excelSpi: ExcelSpi,
 ) : PointHistoryApi {
 
     override suspend fun saveUserPoint(userId: UUID, givePointUserRequest: DomainGivePointUserRequest) {
@@ -86,7 +91,10 @@ class PointHistoryApiImpl(
     }
 
     override suspend fun queryUserPointHistory(userId: UUID, type: String): PointHistoryListResponse {
-        val pointHistory = pointHistorySpi.findAllByUserIdAndType(userId, convertType(type))
+        val pointStatusEntity = pointHistorySpi.findByUserId(userId)
+            ?: throw UserNotFoundException(UserNotFoundException.USER_ID_NOT_FOUND)
+
+        val pointHistory = pointHistorySpi.findAllByUserIdAndType(pointStatusEntity.userId, convertType(type))
         return PointHistoryListResponse(pointHistory)
     }
 
@@ -94,8 +102,10 @@ class PointHistoryApiImpl(
         val getUserPointStatus = pointStatusSpi.findByUserId(userId)
             ?: throw UserNotFoundException(UserNotFoundException.USER_ID_NOT_FOUND)
 
-        val pointHistory = pointHistorySpi.findAllByUserIdAndType(userId, convertType(type))
+        val pointStatusEntity = pointHistorySpi.findByUserId(userId)
+            ?: throw UserNotFoundException(UserNotFoundException.USER_ID_NOT_FOUND)
 
+        val pointHistory = pointHistorySpi.findAllByUserIdAndType(pointStatusEntity.userId, convertType(type))
 
         return PointHistoryListStudentResponse(
             goodPoint = getUserPointStatus.goodPoint,
@@ -138,5 +148,14 @@ class PointHistoryApiImpl(
                 pointStatusSpi.applyPointStatusChanges(penaltyEducationComplete)
             }
         }
+    }
+
+    override suspend fun queryUserPointHistoryExcel(): ExportUserPointStatusResponse {
+        val fileName = String("상벌점 부여내역 ${LocalDate.now()}.xlsx".toByteArray(charset("UTF-8")), Charset.forName("ISO-8859-1"))
+
+        return ExportUserPointStatusResponse(
+            file = excelSpi.writeUserPointHistoryExcelFile(),
+            fileName = fileName,
+        )
     }
 }

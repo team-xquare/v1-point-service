@@ -17,26 +17,12 @@ import java.io.ByteArrayOutputStream
 class ExcelSpiImpl(
     private val userSpi: UserSpi,
     private val pointStatusSpi: PointStatusSpi,
-    private val pointHistorySpi: PointHistorySpi
+    private val pointHistorySpi: PointHistorySpi,
 
 ) : ExcelSpi {
 
     override suspend fun writeUserPointHistoryExcelFile(): ByteArray {
         val attributes = listOf("학번", "이름", "상점", "벌점", "상점내역", "벌점내역", "교육 단계")
-
-        val datasList = listOf(
-            listOf("2019000001", "홍길동", "10", "5", "상점내역", "벌점내역", "교육 단계"),
-            listOf("2019000002", "홍길동", "10", "5", "상점내역", "벌점내역", "교육 단계"),
-            listOf("2019000003", "홍길동", "10", "5", "상점내역", "벌점내역", "교육 단계"),
-            listOf("2019000004", "홍길동", "10", "5", "상점내역", "벌점내역", "교육 단계"),
-            listOf("2019000005", "홍길동", "10", "5", "상점내역", "벌점내역", "교육 단계"),
-            listOf("2019000006", "홍길동", "10", "5", "상점내역", "벌점내역", "교육 단계"),
-            listOf("2019000007", "홍길동", "10", "5", "상점내역", "벌점내역", "교육 단계"),
-            listOf("2019000008", "홍길동", "10", "5", "상점내역", "벌점내역", "교육 단계"),
-            listOf("2019000009", "홍길동", "10", "5", "상점내역", "벌점내역", "교육 단계"),
-            listOf("2019000010", "홍길동", "10", "5", "상점내역", "벌점내역", "교육 단계"),
-        )
-
         val pointStatus = pointStatusSpi.findAll()
         val userPointStatus = userSpi.getUserInfo(pointStatus.map { it.userId })
         val goodPointHistory = pointHistorySpi.findAllByIdAndType(userPointStatus.map { it.id }, true)

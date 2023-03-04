@@ -167,10 +167,7 @@ class PointHistoryRepository(
         }
     }
 
-    private suspend fun ReactiveQueryFactory.findAllByIdAndType(
-        ids: List<UUID>,
-        type: Boolean?
-    ): List<PointHistoryExcelElement> {
+    private suspend fun ReactiveQueryFactory.findAllByIdAndType(ids: List<UUID>, type: Boolean?): List<PointHistoryExcelElement> {
         return this.listQuery {
             select(
                 listOf(
@@ -186,7 +183,7 @@ class PointHistoryRepository(
                 and(
                     col(PointHistoryEntity::userId).`in`(ids),
                     type?.let { col(PointEntity::type).equal(type) },
-                )
+                ),
             )
         }
     }

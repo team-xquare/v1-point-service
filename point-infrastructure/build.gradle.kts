@@ -27,6 +27,8 @@ dependencies {
     implementation(Dependencies.CLOUD_CONFIG)
     implementation(Dependencies.UUID_V7)
     implementation(Dependencies.REACTIVE_REDIS)
+    implementation(Dependencies.APACHE_POI)
+    implementation(Dependencies.APACHE_POI_OOXML)
 
     implementation(project(":point-domain"))
 }

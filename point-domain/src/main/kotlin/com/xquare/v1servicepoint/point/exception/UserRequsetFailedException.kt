@@ -5,4 +5,4 @@ import com.xquare.v1servicepoint.exception.BaseException
 class UserRequsetFailedException(
     message: String,
     statusCode: Int,
-): BaseException(message, statusCode)
+) : BaseException(message, statusCode)

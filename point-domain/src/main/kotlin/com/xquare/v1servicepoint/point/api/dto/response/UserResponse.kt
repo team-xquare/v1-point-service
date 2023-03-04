@@ -1,7 +1,7 @@
 package com.xquare.v1servicepoint.point.api.dto.response
 
 import java.time.LocalDate
-import java.util.*
+import java.util.UUID
 
 data class UserResponse(
     val users: List<UserInfoListElement>,

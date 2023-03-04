@@ -6,6 +6,5 @@ import java.util.UUID
 
 @Spi
 interface UserSpi {
-
     suspend fun getUserInfo(userId: List<UUID>): List<UserResponse.UserInfoListElement>
 }

@@ -1,9 +1,9 @@
 package com.xquare.v1servicepoint.point.entity.repository
 
 import com.linecorp.kotlinjdsl.ReactiveQueryFactory
+import com.linecorp.kotlinjdsl.listQuery
 import com.linecorp.kotlinjdsl.query.HibernateMutinyReactiveQueryFactory
 import com.linecorp.kotlinjdsl.querydsl.expression.col
-import com.linecorp.kotlinjdsl.selectQuery
 import com.linecorp.kotlinjdsl.singleQueryOrNull
 import com.xquare.v1servicepoint.point.PointStatus
 import com.xquare.v1servicepoint.point.entity.PointStatusEntity
@@ -56,4 +56,18 @@ class PointStatusRepository(
 
     private suspend fun Mutiny.Session.persistPointStatusEntityConcurrently(pointStatusEntity: PointStatusEntity) =
         this@persistPointStatusEntityConcurrently.persist(pointStatusEntity).awaitSuspending()
+
+    override suspend fun findAll(): List<PointStatus> {
+        val pointStatusEntities = reactiveQueryFactory.withFactory { _, reactiveQueryFactory ->
+            reactiveQueryFactory.findAllPointStatus()
+        }
+        return pointStatusEntities.map { pointStatusMapper.pointStatusEntityToDomain(it) }
+    }
+
+    private suspend fun ReactiveQueryFactory.findAllPointStatus(): List<PointStatusEntity> {
+        return this.listQuery<PointStatusEntity> {
+            select(entity(PointStatusEntity::class))
+            from(entity(PointStatusEntity::class))
+        }
+    }
 }

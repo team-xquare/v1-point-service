@@ -9,8 +9,7 @@ import org.springframework.stereotype.Component
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
-import java.util.*
-
+import java.util.UUID
 
 @Component
 class UserSpiImpl(
@@ -19,7 +18,7 @@ class UserSpiImpl(
     private val userHost: String,
     @Value("\${service.scheme}")
     private val scheme: String,
-): UserSpi {
+) : UserSpi {
     override suspend fun getUserInfo(userId: List<UUID>): List<UserResponse.UserInfoListElement> {
         val multiValueMap = createMultiValueMap(userId.map { it.toString() })
         return webClient.get().uri {
@@ -56,5 +55,4 @@ class UserSpiImpl(
         }
         return multiValueMap
     }
-
 }

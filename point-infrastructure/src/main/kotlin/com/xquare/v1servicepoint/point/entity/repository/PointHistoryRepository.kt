@@ -1,6 +1,5 @@
 package com.xquare.v1servicepoint.point.entity.repository
 
-import com.github.f4b6a3.uuid.UuidCreator
 import com.linecorp.kotlinjdsl.ReactiveQueryFactory
 import com.linecorp.kotlinjdsl.deleteQuery
 import com.linecorp.kotlinjdsl.listQuery
@@ -11,6 +10,7 @@ import com.linecorp.kotlinjdsl.selectQuery
 import com.linecorp.kotlinjdsl.singleQueryOrNull
 import com.xquare.v1servicepoint.point.PointHistory
 import com.xquare.v1servicepoint.point.api.dto.response.PointHistoryElement
+import com.xquare.v1servicepoint.point.api.dto.response.PointHistoryExcelElement
 import com.xquare.v1servicepoint.point.entity.PointEntity
 import com.xquare.v1servicepoint.point.entity.PointHistoryEntity
 import com.xquare.v1servicepoint.point.mapper.PointHistoryMapper
@@ -136,5 +136,55 @@ class PointHistoryRepository(
             join(PointHistoryEntity::point, JoinType.LEFT)
             where(col(PointEntity::id).`in`(pointId))
         }.resultList()
+    }
+
+    override suspend fun findByUserId(userId: UUID): PointHistory? {
+        return reactiveQueryFactory.transactionWithFactory { _, reactiveQueryFactory ->
+            reactiveQueryFactory.findAllByUserId(userId)
+        }?.let { pointHistoryMapper.pointHistoryEntityToDomain(it) }
+    }
+
+    private suspend fun ReactiveQueryFactory.findAllByUserId(userId: UUID): PointHistoryEntity? {
+        return this.singleQueryOrNull<PointHistoryEntity> {
+            select(entity(PointHistoryEntity::class))
+            from(entity(PointHistoryEntity::class))
+            where(col(PointHistoryEntity::userId).equal(userId))
+        }
+    }
+
+    override suspend fun findAllByIdAndType(idList: List<UUID>, type: Boolean?): List<PointHistoryExcelElement> {
+        val pointHistory = reactiveQueryFactory.transactionWithFactory { _, reactiveQueryFactory ->
+            reactiveQueryFactory.findAllByIdAndType(idList, type)
+        }
+
+        return pointHistory.map {
+            PointHistoryExcelElement(
+                date = it.date,
+                reason = it.reason,
+                pointType = it.pointType,
+                point = it.point,
+            )
+        }
+    }
+
+    private suspend fun ReactiveQueryFactory.findAllByIdAndType(ids: List<UUID>, type: Boolean?): List<PointHistoryExcelElement> {
+        return this.listQuery {
+            select(
+                listOf(
+                    col(PointHistoryEntity::date),
+                    col(PointEntity::reason),
+                    col(PointEntity::type),
+                    col(PointEntity::point),
+                ),
+            )
+            from(entity(PointHistoryEntity::class))
+            join(PointHistoryEntity::point, JoinType.LEFT)
+            where(
+                and(
+                    col(PointHistoryEntity::userId).`in`(ids),
+                    type?.let { col(PointEntity::type).equal(type) },
+                ),
+            )
+        }
     }
 }

@@ -1,13 +1,11 @@
 package com.xquare.v1servicepoint.point.router
 
-import com.xquare.v1servicepoint.configuration.exception.BadRequestException
 import com.xquare.v1servicepoint.configuration.exception.UnAuthorizedException
 import com.xquare.v1servicepoint.point.api.PointApi
 import com.xquare.v1servicepoint.point.api.PointHistoryApi
 import com.xquare.v1servicepoint.point.api.dto.request.DomainGivePointUserRequest
-import com.xquare.v1servicepoint.point.api.dto.request.DomainUpdatePointRoleRequest
 import com.xquare.v1servicepoint.point.api.dto.request.DomainSavePointRoleRequest
-import com.xquare.v1servicepoint.point.api.impl.PointHistoryApiImpl
+import com.xquare.v1servicepoint.point.api.dto.request.DomainUpdatePointRoleRequest
 import com.xquare.v1servicepoint.point.router.dto.SavePointRoleRequest
 import com.xquare.v1servicepoint.point.router.dto.SaveUserPointRequest
 import com.xquare.v1servicepoint.point.router.dto.UpdatePointRoleRequest
@@ -22,11 +20,7 @@ import org.springframework.web.reactive.function.server.ServerResponse
 import org.springframework.web.reactive.function.server.bodyToMono
 import org.springframework.web.reactive.function.server.bodyValueAndAwait
 import org.springframework.web.reactive.function.server.buildAndAwait
-import reactor.core.publisher.Mono
-import java.io.ByteArrayOutputStream
 import java.net.URI
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.UUID
 
 @Component
@@ -80,7 +74,8 @@ class PointHandler(
             ?: throw UnAuthorizedException("UnAuthorized")
         val type = serverRequest.queryParam("type").orElse("")
 
-        val pointHistoryListForStudentResponse = pointHistoryApi.queryUserPointHistoryForStudent(UUID.fromString(userId), type)
+        val pointHistoryListForStudentResponse =
+            pointHistoryApi.queryUserPointHistoryForStudent(UUID.fromString(userId), type)
         return ServerResponse.ok().bodyValueAndAwait(pointHistoryListForStudentResponse)
     }
 
@@ -139,29 +134,12 @@ class PointHandler(
         return ServerResponse.created(URI("/")).buildAndAwait()
     }
 
-//    suspend fun queryUserPointStatusExcel(serverRequest: ServerRequest): ServerResponse {
-//        val response = pointHistoryApi.queryUserPointHistoryExcel()
-//
-//
-//        val workbook: Workbook =
-//            WorkbookFactory.create(response.file.inputStream())
-//
-//        val outputStream = ByteArrayOutputStream()
-//        workbook.write(outputStream)
-//        val bytes = outputStream.toByteArray()
-//        return ServerResponse.ok()
-//            .contentType(MediaType.APPLICATION_OCTET_STREAM)
-//            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=${response.fileName}.xlsx") // 파일 이름 설정
-//            .bodyValueAndAwait(ByteArrayResource(bytes))
-//    }
-
-    suspend fun test(serverRequest: ServerRequest): ServerResponse {
-        val userIds = serverRequest.queryParams()["userId"]?.map { UUID.fromString(it) }
-            ?: throw BadRequestException("userId is required")
-
-        val pointHistoryListResponse = userSpi.getUserInfo(userIds)
-
-        return ServerResponse.ok().bodyValueAndAwait(pointHistoryListResponse)
+    suspend fun queryUserPointStatusExcel(serverRequest: ServerRequest): ServerResponse {
+        val response = pointHistoryApi.queryUserPointHistoryExcel()
+        return ServerResponse.ok()
+            .contentType(MediaType.APPLICATION_OCTET_STREAM)
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=${response.fileName}")
+            .bodyValueAndAwait(ByteArrayResource(response.file))
     }
 
     suspend fun saveUserPenaltyEducationComplete(serverRequest: ServerRequest): ServerResponse {

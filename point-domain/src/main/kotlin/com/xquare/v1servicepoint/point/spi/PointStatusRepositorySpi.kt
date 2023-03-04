@@ -11,4 +11,6 @@ interface PointStatusRepositorySpi {
     suspend fun applyPointStatusChanges(pointStatus: PointStatus): PointStatus
 
     suspend fun savePointStatus(pointStatus: PointStatus)
+
+    suspend fun findAll(): List<PointStatus>
 }

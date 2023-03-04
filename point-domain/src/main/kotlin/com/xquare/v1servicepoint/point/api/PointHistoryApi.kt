@@ -1,6 +1,7 @@
 package com.xquare.v1servicepoint.point.api
 
 import com.xquare.v1servicepoint.point.api.dto.request.DomainGivePointUserRequest
+import com.xquare.v1servicepoint.point.api.dto.response.ExportUserPointStatusResponse
 import com.xquare.v1servicepoint.point.api.dto.response.PointHistoryListResponse
 import com.xquare.v1servicepoint.point.api.dto.response.PointHistoryListStudentResponse
 import java.util.UUID
@@ -15,6 +16,8 @@ interface PointHistoryApi {
     suspend fun queryUserPointHistoryForStudent(userId: UUID, type: String): PointHistoryListStudentResponse
 
     suspend fun savePointStatus(userId: UUID)
+
+    suspend fun queryUserPointHistoryExcel(): ExportUserPointStatusResponse
 
     suspend fun saveUserPenaltyEducationComplete(userId: UUID)
 }

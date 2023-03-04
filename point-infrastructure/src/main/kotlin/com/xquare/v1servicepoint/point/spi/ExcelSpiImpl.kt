@@ -52,7 +52,7 @@ class ExcelSpiImpl(
                     .replace("[", "")
                     .replace("]", "")
                     .replace("{", "[")
-                    .replace("}", "]")
+                    .replace("}", "]"),
             )
         }
 

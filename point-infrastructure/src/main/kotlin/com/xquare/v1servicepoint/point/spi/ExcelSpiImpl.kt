@@ -33,7 +33,7 @@ class ExcelSpiImpl(
                 ?: throw UserNotFoundException(UserNotFoundException.USER_ID_NOT_FOUND)
 
             listOf(
-                user.grade.toString() + user.classNum.toString() + user.num.toString(),
+                user.grade.toString() + user.classNum.toString() + user.num.toString().padStart(2, '0'),
                 user.name,
                 pointStatus1.goodPoint.toString(),
                 pointStatus1.badPoint.toString(),

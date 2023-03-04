@@ -49,4 +49,8 @@ object Dependencies {
 
     // configuration processor
     const val CONFIGURATION_PROCESSOR = "org.springframework.boot:spring-boot-configuration-processor"
+
+    // excel
+    const val APACHE_POI = "org.apache.poi:poi:${DependencyVersions.APACHE_POI_VERSION}"
+    const val APACHE_POI_OOXML = "org.apache.poi:poi-ooxml:${DependencyVersions.APACHE_POI_VERSION}"
 }

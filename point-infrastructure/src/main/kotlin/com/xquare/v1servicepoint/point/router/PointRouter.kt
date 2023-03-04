@@ -23,6 +23,8 @@ class PointRouter {
             GET("/rule", pointHandler::queryPointRuleList)
             POST("/{student-id}", pointHandler::savePointStatus)
 //            GET("/excel", pointHandler::queryUserPointStatusExcel)
+            GET("/test", pointHandler::test)
+            PATCH("/penalty/{student-id}", pointHandler::saveUserPenaltyEducationComplete)
         }
     }
 }

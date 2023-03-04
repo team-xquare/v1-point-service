@@ -15,4 +15,6 @@ interface PointHistoryApi {
     suspend fun queryUserPointHistoryForStudent(userId: UUID, type: String): PointHistoryListStudentResponse
 
     suspend fun savePointStatus(userId: UUID)
+
+    suspend fun saveUserPenaltyEducationComplete(userId: UUID)
 }

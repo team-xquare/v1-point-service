@@ -29,4 +29,16 @@ data class PointStatus(
     fun minusBadPoint(point: Int): PointStatus {
         return copy(badPoint = badPoint - point)
     }
+
+    fun penaltyEducationComplete(): PointStatus {
+        return copy(isPenaltyRequired = false)
+    }
+
+    fun penaltyEducationStart(): PointStatus {
+        return copy(isPenaltyRequired = true)
+    }
+
+    fun penaltyLevelUp(): PointStatus {
+        return copy(penaltyLevel = penaltyLevel + 1)
+    }
 }

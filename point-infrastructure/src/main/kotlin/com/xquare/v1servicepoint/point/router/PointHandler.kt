@@ -154,4 +154,20 @@ class PointHandler(
 //            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=${response.fileName}.xlsx") // 파일 이름 설정
 //            .bodyValueAndAwait(ByteArrayResource(bytes))
 //    }
+
+    suspend fun test(serverRequest: ServerRequest): ServerResponse {
+        val userIds = serverRequest.queryParams()["userId"]?.map { UUID.fromString(it) }
+            ?: throw BadRequestException("userId is required")
+
+        val pointHistoryListResponse = userSpi.getUserInfo(userIds)
+
+        return ServerResponse.ok().bodyValueAndAwait(pointHistoryListResponse)
+    }
+
+    suspend fun saveUserPenaltyEducationComplete(serverRequest: ServerRequest): ServerResponse {
+        val userId = serverRequest.pathVariable("student-id")
+
+        pointHistoryApi.saveUserPenaltyEducationComplete(UUID.fromString(userId))
+        return ServerResponse.noContent().buildAndAwait()
+    }
 }

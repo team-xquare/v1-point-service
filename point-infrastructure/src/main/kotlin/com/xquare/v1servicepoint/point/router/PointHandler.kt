@@ -164,4 +164,11 @@ class PointHandler(
 
         return ServerResponse.ok().bodyValueAndAwait(pointHistoryListResponse)
     }
+
+    suspend fun saveUserPenaltyEducationComplete(serverRequest: ServerRequest): ServerResponse {
+        val userId = serverRequest.pathVariable("student-id")
+
+        pointHistoryApi.saveUserPenaltyEducationComplete(UUID.fromString(userId))
+        return ServerResponse.noContent().buildAndAwait()
+    }
 }

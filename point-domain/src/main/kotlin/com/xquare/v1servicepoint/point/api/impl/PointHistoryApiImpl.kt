@@ -131,7 +131,7 @@ class PointHistoryApiImpl(
         val pointStatus = pointStatusSpi.findByUserId(userId)
             ?: throw UserNotFoundException(UserNotFoundException.USER_ID_NOT_FOUND)
 
-        when(pointStatus.isPenaltyRequired) {
+        when (pointStatus.isPenaltyRequired) {
             false -> throw UserPenaltyExistException(UserPenaltyExistException.USER_PENALTY_EXIST)
             true -> {
                 val penaltyEducationComplete = pointStatus.penaltyEducationComplete()

@@ -159,7 +159,6 @@ class PointHandler(
         val userIds = serverRequest.queryParams()["userId"]?.map { UUID.fromString(it) }
             ?: throw BadRequestException("userId is required")
 
-        println(userIds)
         val pointHistoryListResponse = userSpi.getUserInfo(userIds)
 
         return ServerResponse.ok().bodyValueAndAwait(pointHistoryListResponse)

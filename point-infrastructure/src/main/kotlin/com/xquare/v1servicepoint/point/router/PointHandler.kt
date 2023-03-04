@@ -1,28 +1,41 @@
 package com.xquare.v1servicepoint.point.router
 
+import com.xquare.v1servicepoint.configuration.exception.BadRequestException
 import com.xquare.v1servicepoint.configuration.exception.UnAuthorizedException
 import com.xquare.v1servicepoint.point.api.PointApi
 import com.xquare.v1servicepoint.point.api.PointHistoryApi
 import com.xquare.v1servicepoint.point.api.dto.request.DomainGivePointUserRequest
 import com.xquare.v1servicepoint.point.api.dto.request.DomainUpdatePointRoleRequest
 import com.xquare.v1servicepoint.point.api.dto.request.DomainSavePointRoleRequest
+import com.xquare.v1servicepoint.point.api.impl.PointHistoryApiImpl
 import com.xquare.v1servicepoint.point.router.dto.SavePointRoleRequest
 import com.xquare.v1servicepoint.point.router.dto.SaveUserPointRequest
 import com.xquare.v1servicepoint.point.router.dto.UpdatePointRoleRequest
+import com.xquare.v1servicepoint.point.spi.UserSpi
 import kotlinx.coroutines.reactor.awaitSingle
+import org.apache.poi.ss.usermodel.Workbook
+import org.apache.poi.ss.usermodel.WorkbookFactory
+import org.springframework.core.io.ByteArrayResource
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.ServerResponse
 import org.springframework.web.reactive.function.server.bodyToMono
 import org.springframework.web.reactive.function.server.bodyValueAndAwait
 import org.springframework.web.reactive.function.server.buildAndAwait
+import reactor.core.publisher.Mono
+import java.io.ByteArrayOutputStream
 import java.net.URI
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.UUID
 
 @Component
 class PointHandler(
     private val pointApi: PointApi,
     private val pointHistoryApi: PointHistoryApi,
+    private val userSpi: UserSpi,
 ) {
     suspend fun queryUserPointStatus(serverRequest: ServerRequest): ServerResponse {
         val userId = serverRequest.pathVariable("student-id")
@@ -126,5 +139,31 @@ class PointHandler(
 
         pointHistoryApi.savePointStatus(UUID.fromString(userId))
         return ServerResponse.created(URI("/")).buildAndAwait()
+    }
+
+//    suspend fun queryUserPointStatusExcel(serverRequest: ServerRequest): ServerResponse {
+//        val response = pointHistoryApi.queryUserPointHistoryExcel()
+//
+//
+//        val workbook: Workbook =
+//            WorkbookFactory.create(response.file.inputStream())
+//
+//        val outputStream = ByteArrayOutputStream()
+//        workbook.write(outputStream)
+//        val bytes = outputStream.toByteArray()
+//        return ServerResponse.ok()
+//            .contentType(MediaType.APPLICATION_OCTET_STREAM)
+//            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=${response.fileName}.xlsx") // 파일 이름 설정
+//            .bodyValueAndAwait(ByteArrayResource(bytes))
+//    }
+
+    suspend fun test(serverRequest: ServerRequest): ServerResponse {
+        val userIds = serverRequest.queryParams()["userId"]?.map { UUID.fromString(it) }
+            ?: throw BadRequestException("userId is required")
+
+        println(userIds)
+        val pointHistoryListResponse = userSpi.getUserInfo(userIds)
+
+        return ServerResponse.ok().bodyValueAndAwait(pointHistoryListResponse)
     }
 }

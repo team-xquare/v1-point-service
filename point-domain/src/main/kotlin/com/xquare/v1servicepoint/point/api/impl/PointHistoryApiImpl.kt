@@ -90,10 +90,11 @@ class PointHistoryApiImpl(
     }
 
     override suspend fun queryUserPointHistory(userId: UUID, type: String): PointHistoryListResponse {
-        val pointStatusEntity = pointHistorySpi.findByUserId(userId)
+        val pointHistoryEntity = pointHistorySpi.findByUserId(userId)
             ?: throw UserNotFoundException(UserNotFoundException.USER_ID_NOT_FOUND)
 
-        val pointHistory = pointHistorySpi.findAllByUserIdAndType(pointStatusEntity.userId, convertType(type))
+        println(pointHistoryEntity.userId)
+        val pointHistory = pointHistorySpi.findAllByUserIdAndType(pointHistoryEntity.userId, convertType(type))
         return PointHistoryListResponse(pointHistory)
     }
 

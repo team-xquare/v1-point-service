@@ -145,11 +145,11 @@ class PointHistoryRepository(
     }
 
     private suspend fun ReactiveQueryFactory.findAllByUserId(userId: UUID): PointHistoryEntity? {
-        return this.singleQueryOrNull<PointHistoryEntity> {
+        return this.listQuery<PointHistoryEntity> {
             select(entity(PointHistoryEntity::class))
             from(entity(PointHistoryEntity::class))
             where(col(PointHistoryEntity::userId).equal(userId))
-        }
+        }.firstOrNull()
     }
 
     override suspend fun findAllByIdAndType(idList: List<UUID>, type: Boolean?): List<PointHistoryExcelElement> {

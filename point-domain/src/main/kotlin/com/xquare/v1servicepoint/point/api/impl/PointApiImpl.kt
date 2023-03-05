@@ -102,7 +102,7 @@ class PointApiImpl(
                 PointStudentStatusElement(
                     id = it.id,
                     name = it.name,
-                    num = "${it.grade}${it.classNum}${if (it.num > 9) "${it.num}" else "0${it.num}"}",
+                    num = "${it.grade}${it.classNum}${it.num.toString().padStart(2, '0')}",
                     goodPoint = status.goodPoint,
                     badPoint = status.badPoint,
                     penaltyLevel = status.penaltyLevel,

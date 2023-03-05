@@ -1,6 +1,7 @@
 package com.xquare.v1servicepoint.point.api.impl
 
 import com.xquare.v1servicepoint.annotation.UseCase
+import com.xquare.v1servicepoint.point.Point
 import com.xquare.v1servicepoint.point.PointStatus
 import com.xquare.v1servicepoint.point.api.PointHistoryApi
 import com.xquare.v1servicepoint.point.api.dto.request.DomainGivePointUserRequest
@@ -29,39 +30,34 @@ class PointHistoryApiImpl(
 ) : PointHistoryApi {
 
     override suspend fun saveUserPoint(userId: UUID, givePointUserRequest: DomainGivePointUserRequest) {
-        val getPointByPointId = pointSpi.findByPointId(givePointUserRequest.pointId)
+        val getPointByPointId: Point = pointSpi.findByPointId(givePointUserRequest.pointId)
             ?: throw PointNotFoundException(PointNotFoundException.POINT_NOT_FOUND)
 
-        val pointStatus = pointStatusSpi.findByUserId(userId)
+        val pointStatus: PointStatus = pointStatusSpi.findByUserId(userId)
             ?: throw UserNotFoundException(UserNotFoundException.USER_ID_NOT_FOUND)
 
-        when (getPointByPointId.type) {
-            true -> {
-                val addGoodPoint = pointStatus.addGoodPoint(getPointByPointId.point)
-                pointStatusSpi.applyPointStatusChanges(addGoodPoint)
-            }
-
-            false -> {
-                if (pointStatus.badPoint <= 15) {
-                    val penaltyLevel =
-                        pointStatus.penaltyEducationStart().addBadPoint(getPointByPointId.point).penaltyLevelUp()
-                    pointStatusSpi.applyPointStatusChanges(penaltyLevel)
-                } else if (pointStatus.badPoint <= 20) {
-                    val penaltyLevel = pointStatus.addBadPoint(getPointByPointId.point).penaltyLevelUp()
-                    pointStatusSpi.applyPointStatusChanges(penaltyLevel)
-                } else if (pointStatus.badPoint <= 25) {
-                    val penaltyLevel = pointStatus.addBadPoint(getPointByPointId.point).penaltyLevelUp()
-                    pointStatusSpi.applyPointStatusChanges(penaltyLevel)
-                } else if (pointStatus.badPoint <= 35) {
-                    val penaltyLevel = pointStatus.addBadPoint(getPointByPointId.point).penaltyLevelUp()
-                    pointStatusSpi.applyPointStatusChanges(penaltyLevel)
-                } else if (pointStatus.badPoint <= 45) {
-                    val penaltyLevel = pointStatus.addBadPoint(getPointByPointId.point).penaltyLevelUp()
-                    pointStatusSpi.applyPointStatusChanges(penaltyLevel)
-                } else {
-                    val addBadPoint = pointStatus.addBadPoint(getPointByPointId.point)
-                    pointStatusSpi.applyPointStatusChanges(addBadPoint)
-                }
+        if (getPointByPointId.type) {
+            val addGoodPoint = pointStatus.addGoodPoint(getPointByPointId.point)
+            pointStatusSpi.applyPointStatusChanges(addGoodPoint)
+        } else {
+            if (pointStatus.badPoint <= 15) {
+                val penaltyLevel = pointStatus.penaltyEducationStart().addBadPoint(getPointByPointId.point).penaltyLevelUp()
+                pointStatusSpi.applyPointStatusChanges(penaltyLevel)
+            } else if (pointStatus.badPoint >= 16 && pointStatus.badPoint <= 20) {
+                val penaltyLevel = pointStatus.addBadPoint(getPointByPointId.point).penaltyLevelUp()
+                pointStatusSpi.applyPointStatusChanges(penaltyLevel)
+            } else if (pointStatus.badPoint >= 21 && pointStatus.badPoint <= 25) {
+                val penaltyLevel = pointStatus.addBadPoint(getPointByPointId.point).penaltyLevelUp()
+                pointStatusSpi.applyPointStatusChanges(penaltyLevel)
+            } else if (pointStatus.badPoint >= 26 && pointStatus.badPoint <= 35) {
+                val penaltyLevel = pointStatus.addBadPoint(getPointByPointId.point).penaltyLevelUp()
+                pointStatusSpi.applyPointStatusChanges(penaltyLevel)
+            } else if (pointStatus.badPoint >= 36 && pointStatus.badPoint <= 45) {
+                val penaltyLevel = pointStatus.addBadPoint(getPointByPointId.point).penaltyLevelUp()
+                pointStatusSpi.applyPointStatusChanges(penaltyLevel)
+            } else {
+                val addBadPoint = pointStatus.addBadPoint(getPointByPointId.point)
+                pointStatusSpi.applyPointStatusChanges(addBadPoint)
             }
         }
 

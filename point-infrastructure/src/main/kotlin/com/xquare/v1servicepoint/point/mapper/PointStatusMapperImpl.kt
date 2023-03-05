@@ -20,7 +20,7 @@ class PointStatusMapperImpl : PointStatusMapper {
     override fun pointStatusDomainToEntity(pointStatus: PointStatus): PointStatusEntity {
         return PointStatusEntity(
             userId = pointStatus.userId,
-            goodPoint = pointStatus.badPoint,
+            goodPoint = pointStatus.goodPoint,
             badPoint = pointStatus.badPoint,
             penaltyLevel = pointStatus.penaltyLevel,
             isPenaltyRequired = pointStatus.isPenaltyRequired,

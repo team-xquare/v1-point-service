@@ -22,13 +22,9 @@ class PointRouter {
             POST("/rule", pointHandler::savePointRole)
             GET("/rule", pointHandler::queryPointRuleList)
             POST("/{student-id}", pointHandler::savePointStatus)
-<<<<<<< Updated upstream
             GET("/excel", pointHandler::queryUserPointStatusExcel)
             PATCH("/penalty/{student-id}", pointHandler::saveUserPenaltyEducationComplete)
-=======
             GET("/student", pointHandler::queryStudentStatus)
-//            GET("/excel", pointHandler::queryUserPointStatusExcel)
->>>>>>> Stashed changes
         }
     }
 }

@@ -57,7 +57,6 @@ class PointStatusRepository(
     private suspend fun Mutiny.Session.persistPointStatusEntityConcurrently(pointStatusEntity: PointStatusEntity) =
         this@persistPointStatusEntityConcurrently.persist(pointStatusEntity).awaitSuspending()
 
-<<<<<<< Updated upstream
     override suspend fun findAll(): List<PointStatus> {
         val pointStatusEntities = reactiveQueryFactory.withFactory { _, reactiveQueryFactory ->
             reactiveQueryFactory.findAllPointStatus()
@@ -69,7 +68,9 @@ class PointStatusRepository(
         return this.listQuery<PointStatusEntity> {
             select(entity(PointStatusEntity::class))
             from(entity(PointStatusEntity::class))
-=======
+        }
+    }
+
     override suspend fun findAllByPenaltyLevel(penaltyLevel: Int?): List<PointStatus> {
         val pointStatusEntities = reactiveQueryFactory.withFactory { _, reactiveQueryFactory ->
             reactiveQueryFactory.findAllByPenaltyLevel(penaltyLevel)
@@ -87,7 +88,6 @@ class PointStatusRepository(
                     penaltyLevel?.let { col(PointStatusEntity::penaltyLevel).equal(it) }
                 )
             )
->>>>>>> Stashed changes
         }
     }
 }

@@ -12,7 +12,7 @@ import com.xquare.v1servicepoint.point.spi.PointStatusSpi
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import org.hibernate.reactive.mutiny.Mutiny
 import org.springframework.stereotype.Repository
-import java.util.UUID
+import java.util.*
 
 @Repository
 class PointStatusRepository(
@@ -57,6 +57,7 @@ class PointStatusRepository(
     private suspend fun Mutiny.Session.persistPointStatusEntityConcurrently(pointStatusEntity: PointStatusEntity) =
         this@persistPointStatusEntityConcurrently.persist(pointStatusEntity).awaitSuspending()
 
+<<<<<<< Updated upstream
     override suspend fun findAll(): List<PointStatus> {
         val pointStatusEntities = reactiveQueryFactory.withFactory { _, reactiveQueryFactory ->
             reactiveQueryFactory.findAllPointStatus()
@@ -68,6 +69,25 @@ class PointStatusRepository(
         return this.listQuery<PointStatusEntity> {
             select(entity(PointStatusEntity::class))
             from(entity(PointStatusEntity::class))
+=======
+    override suspend fun findAllByPenaltyLevel(penaltyLevel: Int?): List<PointStatus> {
+        val pointStatusEntities = reactiveQueryFactory.withFactory { _, reactiveQueryFactory ->
+            reactiveQueryFactory.findAllByPenaltyLevel(penaltyLevel)
+        }
+
+        return pointStatusEntities.map { pointStatusMapper.pointStatusEntityToDomain(it) }
+    }
+
+    private suspend fun ReactiveQueryFactory.findAllByPenaltyLevel(penaltyLevel: Int?): List<PointStatusEntity> {
+        return this.listQuery {
+            select(entity(PointStatusEntity::class))
+            from(entity(PointStatusEntity::class))
+            where(
+                and(
+                    penaltyLevel?.let { col(PointStatusEntity::penaltyLevel).equal(it) }
+                )
+            )
+>>>>>>> Stashed changes
         }
     }
 }

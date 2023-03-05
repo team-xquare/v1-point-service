@@ -9,8 +9,11 @@ interface PointStatusRepositorySpi {
 
     suspend fun findByUserId(userId: UUID): PointStatus?
     suspend fun applyPointStatusChanges(pointStatus: PointStatus): PointStatus
-
     suspend fun savePointStatus(pointStatus: PointStatus)
+<<<<<<< Updated upstream
 
     suspend fun findAll(): List<PointStatus>
+=======
+    suspend fun findAllByPenaltyLevel(penaltyLevel: Int?): List<PointStatus>
+>>>>>>> Stashed changes
 }

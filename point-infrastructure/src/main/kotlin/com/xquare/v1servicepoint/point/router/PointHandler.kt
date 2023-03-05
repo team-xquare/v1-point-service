@@ -21,7 +21,7 @@ import org.springframework.web.reactive.function.server.bodyToMono
 import org.springframework.web.reactive.function.server.bodyValueAndAwait
 import org.springframework.web.reactive.function.server.buildAndAwait
 import java.net.URI
-import java.util.UUID
+import java.util.*
 
 @Component
 class PointHandler(
@@ -147,5 +147,29 @@ class PointHandler(
 
         pointHistoryApi.saveUserPenaltyEducationComplete(UUID.fromString(userId))
         return ServerResponse.noContent().buildAndAwait()
+    }
+
+//    suspend fun queryUserPointStatusExcel(serverRequest: ServerRequest): ServerResponse {
+//        val response = pointHistoryApi.queryUserPointHistoryExcel()
+//
+//
+//        val workbook: Workbook =
+//            WorkbookFactory.create(response.file.inputStream())
+//
+//        val outputStream = ByteArrayOutputStream()
+//        workbook.write(outputStream)
+//        val bytes = outputStream.toByteArray()
+//        return ServerResponse.ok()
+//            .contentType(MediaType.APPLICATION_OCTET_STREAM)
+//            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=${response.fileName}.xlsx") // 파일 이름 설정
+//            .bodyValueAndAwait(ByteArrayResource(bytes))
+//    }
+
+    suspend fun queryStudentStatus(serverRequest: ServerRequest): ServerResponse {
+        val name = serverRequest.queryParams().getFirst("name")
+        val penaltyLevel = serverRequest.queryParams().getFirst("penaltyLevel")?.toIntOrNull()
+
+        val pointStatus = pointApi.queryStudentStatus(name, penaltyLevel)
+        return ServerResponse.ok().bodyValueAndAwait(pointStatus)
     }
 }

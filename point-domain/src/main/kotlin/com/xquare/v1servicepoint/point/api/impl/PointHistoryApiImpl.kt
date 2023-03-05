@@ -43,16 +43,16 @@ class PointHistoryApiImpl(
             if (pointStatus.badPoint <= 15) {
                 val penaltyLevel = pointStatus.penaltyEducationStart().addBadPoint(getPointByPointId.point).penaltyLevelOne()
                 pointStatusSpi.applyPointStatusChanges(penaltyLevel)
-            } else if (pointStatus.badPoint >= 16 && pointStatus.badPoint <= 20) {
+            } else if (pointStatus.badPoint in 16..20) {
                 val penaltyLevel = pointStatus.addBadPoint(getPointByPointId.point).penaltyLevelTwo()
                 pointStatusSpi.applyPointStatusChanges(penaltyLevel)
-            } else if (pointStatus.badPoint >= 21 && pointStatus.badPoint <= 25) {
+            } else if (pointStatus.badPoint in 21..25) {
                 val penaltyLevel = pointStatus.addBadPoint(getPointByPointId.point).penaltyLevelThree()
                 pointStatusSpi.applyPointStatusChanges(penaltyLevel)
-            } else if (pointStatus.badPoint >= 26 && pointStatus.badPoint <= 35) {
+            } else if (pointStatus.badPoint in 26..35) {
                 val penaltyLevel = pointStatus.addBadPoint(getPointByPointId.point).penaltyLevelFour()
                 pointStatusSpi.applyPointStatusChanges(penaltyLevel)
-            } else if (pointStatus.badPoint >= 36 && pointStatus.badPoint <= 45) {
+            } else if (pointStatus.badPoint in 36..45) {
                 val penaltyLevel = pointStatus.addBadPoint(getPointByPointId.point).penaltyLeveFive()
                 pointStatusSpi.applyPointStatusChanges(penaltyLevel)
             } else {

@@ -40,9 +40,11 @@ class PointHistoryApiImpl(
                 val addGoodPoint = pointStatus.addGoodPoint(getPointByPointId.point)
                 pointStatusSpi.applyPointStatusChanges(addGoodPoint)
             }
+
             false -> {
                 if (pointStatus.badPoint <= 15) {
-                    val penaltyLevel = pointStatus.penaltyEducationStart().addBadPoint(getPointByPointId.point).penaltyLevelUp()
+                    val penaltyLevel =
+                        pointStatus.penaltyEducationStart().addBadPoint(getPointByPointId.point).penaltyLevelUp()
                     pointStatusSpi.applyPointStatusChanges(penaltyLevel)
                 } else if (pointStatus.badPoint <= 20) {
                     val penaltyLevel = pointStatus.addBadPoint(getPointByPointId.point).penaltyLevelUp()
@@ -81,6 +83,7 @@ class PointHistoryApiImpl(
                 val minusGoodPoint = pointStatus.minusGoodPoint(getPointByPointId.point)
                 pointStatusSpi.applyPointStatusChanges(minusGoodPoint)
             }
+
             false -> {
                 val minusBadPoint = pointStatus.minusBadPoint(getPointByPointId.point)
                 pointStatusSpi.applyPointStatusChanges(minusBadPoint)
@@ -102,10 +105,7 @@ class PointHistoryApiImpl(
         val getUserPointStatus = pointStatusSpi.findByUserId(userId)
             ?: throw UserNotFoundException(UserNotFoundException.USER_ID_NOT_FOUND)
 
-        val pointStatusEntity = pointHistorySpi.findByUserId(userId)
-            ?: throw UserNotFoundException(UserNotFoundException.USER_ID_NOT_FOUND)
-
-        val pointHistory = pointHistorySpi.findAllByUserIdAndType(pointStatusEntity.userId, convertType(type))
+        val pointHistory = pointHistorySpi.findAllByUserIdAndType(getUserPointStatus.userId, convertType(type))
 
         return PointHistoryListStudentResponse(
             goodPoint = getUserPointStatus.goodPoint,
@@ -151,7 +151,8 @@ class PointHistoryApiImpl(
     }
 
     override suspend fun queryUserPointHistoryExcel(): ExportUserPointStatusResponse {
-        val fileName = String("상벌점 부여내역 ${LocalDate.now()}.xlsx".toByteArray(charset("UTF-8")), Charset.forName("ISO-8859-1"))
+        val fileName =
+            String("상벌점 부여내역 ${LocalDate.now()}.xlsx".toByteArray(charset("UTF-8")), Charset.forName("ISO-8859-1"))
 
         return ExportUserPointStatusResponse(
             file = excelSpi.writeUserPointHistoryExcelFile(),

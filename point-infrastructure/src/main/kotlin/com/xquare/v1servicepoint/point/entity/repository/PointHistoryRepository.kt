@@ -8,6 +8,7 @@ import com.linecorp.kotlinjdsl.querydsl.expression.col
 import com.linecorp.kotlinjdsl.querydsl.from.join
 import com.linecorp.kotlinjdsl.selectQuery
 import com.linecorp.kotlinjdsl.singleQueryOrNull
+import com.xquare.v1servicepoint.point.Point
 import com.xquare.v1servicepoint.point.PointHistory
 import com.xquare.v1servicepoint.point.api.dto.response.PointHistoryElement
 import com.xquare.v1servicepoint.point.api.dto.response.PointHistoryExcelElement
@@ -19,6 +20,7 @@ import com.xquare.v1servicepoint.point.spi.PointHistorySpi
 import com.xquare.v1servicepoint.point.spi.PointSpi
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import org.hibernate.reactive.mutiny.Mutiny
+import org.hibernate.sql.Select
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
 import java.util.UUID
@@ -60,6 +62,8 @@ class PointHistoryRepository(
 
     private suspend fun ReactiveQueryFactory.findByIdAndStudentId(id: UUID, studentId: UUID): PointHistoryEntity? {
         return this.singleQueryOrNull<PointHistoryEntity> {
+            select(entity(PointHistoryEntity::class))
+            from(entity(PointHistoryEntity::class))
             where(
                 col(PointHistoryEntity::id).equal(id)
                     .and(col(PointHistoryEntity::userId).equal(studentId)),

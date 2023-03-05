@@ -36,32 +36,23 @@ class PointHistoryApiImpl(
         val pointStatus: PointStatus = pointStatusSpi.findByUserId(userId)
             ?: throw UserNotFoundException(UserNotFoundException.USER_ID_NOT_FOUND)
 
-        val addBadPoint = pointStatus.addBadPoint(getPointByPointId.point)
+        when(getPointByPointId.type) {
+            true -> {
+                val addGoodPoint = pointStatus.addGoodPoint(getPointByPointId.point)
+                pointStatusSpi.applyPointStatusChanges(addGoodPoint)
+            }
 
-        if (getPointByPointId.type) {
-            val addGoodPoint = pointStatus.addGoodPoint(getPointByPointId.point)
-            pointStatusSpi.applyPointStatusChanges(addGoodPoint)
-        } else {
-            if (addBadPoint.badPoint <= 15) {
-                val penaltyLevel = addBadPoint.penaltyEducationStart().penaltyLevelUp()
-                pointStatusSpi.applyPointStatusChanges(penaltyLevel)
-            } else if (addBadPoint.badPoint in 16..20) {
-                val penaltyLevel = addBadPoint.penaltyLevelUp().penaltyEducationStart()
-                pointStatusSpi.applyPointStatusChanges(penaltyLevel)
-            } else if (addBadPoint.badPoint in 21..25) {
-                val penaltyLevel = addBadPoint.penaltyLevelUp().penaltyEducationStart()
-                pointStatusSpi.applyPointStatusChanges(penaltyLevel)
-            } else if (addBadPoint.badPoint in 26..35) {
-                val penaltyLevel = addBadPoint.penaltyLevelUp().penaltyEducationStart()
-                pointStatusSpi.applyPointStatusChanges(penaltyLevel)
-            } else if (addBadPoint.badPoint in 36..45) {
-                val penaltyLevel = addBadPoint.penaltyLevelUp().penaltyEducationStart()
-                pointStatusSpi.applyPointStatusChanges(penaltyLevel)
-            } else {
-                pointStatusSpi.applyPointStatusChanges(addBadPoint)
+            false -> {
+                val addBadPoint = pointStatus.addBadPoint(getPointByPointId.point)
+
+                val penaltyLevel = listOf(15, 20, 25, 30, 35, 40, 45)
+
+                if (addBadPoint.badPoint >= penaltyLevel[addBadPoint.penaltyLevel - 1]) {
+                    val penaltyLevel = addBadPoint.penaltyEducationStart()
+                    pointStatusSpi.applyPointStatusChanges(penaltyLevel)
+                }
             }
         }
-
         pointHistorySpi.saveUserPoint(userId, getPointByPointId.id)
     }
 
@@ -138,8 +129,17 @@ class PointHistoryApiImpl(
         when (pointStatus.isPenaltyRequired) {
             false -> throw UserPenaltyExistException(UserPenaltyExistException.USER_PENALTY_EXIST)
             true -> {
-                val penaltyEducationComplete = pointStatus.penaltyEducationComplete()
-                pointStatusSpi.applyPointStatusChanges(penaltyEducationComplete)
+                val penaltyEducationComplete = pointStatus.penaltyEducationCompleteAndMinusGoodPoint().penaltyEducationCompleteAndMinusBadPoint().penaltyEducationComplete().penaltyLevelUp()
+                val penaltyLevel = listOf(15, 20, 25, 30, 35, 40, 45)
+
+                if (penaltyEducationComplete.badPoint >= penaltyLevel[penaltyEducationComplete.penaltyLevel - 1]) {
+                    val penaltyLevel = penaltyEducationComplete.penaltyEducationStart()
+                    pointStatusSpi.applyPointStatusChanges(penaltyLevel)
+                }
+                else {
+                    val penaltyLevel = penaltyEducationComplete.penaltyEducationComplete()
+                    pointStatusSpi.applyPointStatusChanges(penaltyLevel)
+                }
             }
         }
     }

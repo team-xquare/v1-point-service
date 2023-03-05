@@ -18,6 +18,7 @@ data class PointStatus(
     fun addGoodPoint(point: Int): PointStatus {
         return copy(goodPoint = goodPoint + point)
     }
+
     fun addBadPoint(point: Int): PointStatus {
         return copy(badPoint = badPoint + point)
     }
@@ -40,5 +41,13 @@ data class PointStatus(
 
     fun penaltyLevelUp(): PointStatus {
         return copy(penaltyLevel = penaltyLevel + 1)
+    }
+
+    fun penaltyEducationCompleteAndMinusGoodPoint(): PointStatus {
+        return copy(goodPoint = goodPoint - 5)
+    }
+
+    fun penaltyEducationCompleteAndMinusBadPoint(): PointStatus {
+        return copy(badPoint = badPoint - 5)
     }
 }

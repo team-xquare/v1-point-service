@@ -16,7 +16,7 @@ import com.xquare.v1servicepoint.point.spi.PointHistorySpi
 import com.xquare.v1servicepoint.point.spi.PointSpi
 import com.xquare.v1servicepoint.point.spi.PointStatusSpi
 import com.xquare.v1servicepoint.point.spi.UserSpi
-import java.util.*
+import java.util.UUID
 
 @UseCase
 class PointApiImpl(

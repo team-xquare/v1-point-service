@@ -38,7 +38,23 @@ data class PointStatus(
         return copy(isPenaltyRequired = true)
     }
 
-    fun penaltyLevelUp(): PointStatus {
-        return copy(penaltyLevel = penaltyLevel + 1)
+    fun penaltyLevelOne(): PointStatus {
+        return copy(penaltyLevel = 1)
+    }
+
+    fun penaltyLevelTwo(): PointStatus {
+        return copy(penaltyLevel = 2)
+    }
+
+    fun penaltyLevelThree(): PointStatus {
+        return copy(penaltyLevel = 3)
+    }
+
+    fun penaltyLevelFour(): PointStatus {
+        return copy(penaltyLevel = 4)
+    }
+
+    fun penaltyLeveFive(): PointStatus {
+        return copy(penaltyLevel = 5)
     }
 }

@@ -70,4 +70,24 @@ class PointStatusRepository(
             from(entity(PointStatusEntity::class))
         }
     }
+
+    override suspend fun findAllByPenaltyLevel(penaltyLevel: Int?): List<PointStatus> {
+        val pointStatusEntities = reactiveQueryFactory.withFactory { _, reactiveQueryFactory ->
+            reactiveQueryFactory.findAllByPenaltyLevel(penaltyLevel)
+        }
+
+        return pointStatusEntities.map { pointStatusMapper.pointStatusEntityToDomain(it) }
+    }
+
+    private suspend fun ReactiveQueryFactory.findAllByPenaltyLevel(penaltyLevel: Int?): List<PointStatusEntity> {
+        return this.listQuery {
+            select(entity(PointStatusEntity::class))
+            from(entity(PointStatusEntity::class))
+            where(
+                and(
+                    penaltyLevel?.let { col(PointStatusEntity::penaltyLevel).equal(it) },
+                ),
+            )
+        }
+    }
 }

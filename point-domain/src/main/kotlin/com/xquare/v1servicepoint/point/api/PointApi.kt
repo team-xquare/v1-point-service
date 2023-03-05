@@ -4,6 +4,7 @@ import com.xquare.v1servicepoint.point.api.dto.request.DomainUpdatePointRoleRequ
 import com.xquare.v1servicepoint.point.api.dto.request.DomainSavePointRoleRequest
 import com.xquare.v1servicepoint.point.api.dto.response.PointRuleListResponse
 import com.xquare.v1servicepoint.point.api.dto.response.PointStatusResponse
+import com.xquare.v1servicepoint.point.api.dto.response.PointStudentStatusResponse
 import java.util.UUID
 
 interface PointApi {
@@ -17,4 +18,6 @@ interface PointApi {
     suspend fun savePointRole(request: DomainSavePointRoleRequest)
 
     suspend fun queryPointRoleList(type: Boolean): PointRuleListResponse
+
+    suspend fun queryStudentStatus(name: String?, penaltyLevel: Int?): PointStudentStatusResponse
 }

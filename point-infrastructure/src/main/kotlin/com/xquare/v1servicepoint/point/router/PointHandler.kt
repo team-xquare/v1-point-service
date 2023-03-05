@@ -148,4 +148,12 @@ class PointHandler(
         pointHistoryApi.saveUserPenaltyEducationComplete(UUID.fromString(userId))
         return ServerResponse.noContent().buildAndAwait()
     }
+
+    suspend fun queryStudentStatus(serverRequest: ServerRequest): ServerResponse {
+        val name = serverRequest.queryParams().getFirst("name")
+        val penaltyLevel = serverRequest.queryParams().getFirst("penaltyLevel")?.toIntOrNull()
+
+        val pointStatus = pointApi.queryStudentStatus(name, penaltyLevel)
+        return ServerResponse.ok().bodyValueAndAwait(pointStatus)
+    }
 }

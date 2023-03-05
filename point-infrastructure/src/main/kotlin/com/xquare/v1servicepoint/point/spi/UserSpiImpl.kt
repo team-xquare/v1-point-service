@@ -21,6 +21,11 @@ class UserSpiImpl(
 ) : UserSpi {
     override suspend fun getUserInfo(userId: List<UUID>): List<UserResponse.UserInfoListElement> {
         val multiValueMap = createMultiValueMap(userId.map { it.toString() })
+
+        if (userId.isEmpty()) {
+            return emptyList()
+        }
+
         return webClient.get().uri {
             it.scheme(scheme)
                 .host(userHost)

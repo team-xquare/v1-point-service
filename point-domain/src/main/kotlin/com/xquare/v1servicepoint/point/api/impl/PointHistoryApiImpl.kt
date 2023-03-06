@@ -132,7 +132,7 @@ class PointHistoryApiImpl(
             false -> throw UserPenaltyExistException(UserPenaltyExistException.USER_PENALTY_EXIST)
             true -> {
                 val penaltyEducationComplete = pointStatus.penaltyEducationCompleteAndMinusGoodPoint().penaltyEducationCompleteAndMinusBadPoint().penaltyEducationComplete().penaltyLevelUp()
-                val penaltyLevel = listOf(15, 20, 25, 30, 35, 40, 45)
+                val penaltyLevel = listOf(15, 20, 25, 35, 45)
 
                 if (penaltyEducationComplete.badPoint >= penaltyLevel[penaltyEducationComplete.penaltyLevel - 1]) {
                     val penaltyLevel = penaltyEducationComplete.penaltyEducationStart()

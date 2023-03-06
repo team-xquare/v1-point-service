@@ -32,7 +32,7 @@ class PointStatusEntity(
     var badPoint = badPoint
         protected set
 
-    @field:Column(columnDefinition = "INT", nullable = false)
+    @field:Column(columnDefinition = "INT DEFAULT 1", nullable = false)
     var penaltyLevel = penaltyLevel
         protected set
 

@@ -50,6 +50,8 @@ class PointHistoryApiImpl(
                 if (addBadPoint.badPoint >= penaltyLevel[addBadPoint.penaltyLevel - 1]) {
                     val penaltyLevel = addBadPoint.penaltyEducationStart()
                     pointStatusSpi.applyPointStatusChanges(penaltyLevel)
+                } else {
+                    pointStatusSpi.applyPointStatusChanges(addBadPoint)
                 }
             }
         }
@@ -116,7 +118,7 @@ class PointHistoryApiImpl(
             userId = userId,
             goodPoint = 0,
             badPoint = 0,
-            penaltyLevel = 0,
+            penaltyLevel = 1,
             isPenaltyRequired = false,
         )
         pointStatusSpi.savePointStatus(pointStatus)

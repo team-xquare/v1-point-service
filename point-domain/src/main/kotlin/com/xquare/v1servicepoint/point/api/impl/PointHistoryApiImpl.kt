@@ -70,11 +70,10 @@ class PointHistoryApiImpl(
             throw UserPenaltyExistException(UserPenaltyExistException.USER_PENALTY_EXIST)
         }
 
-        val penaltyLevel = listOf(15, 20, 25, 35, 45)
         val point = pointSpi.findAllByReason(POINT_REASON)
         val penaltyEducationComplete = applyPenaltyStatusChanges(userPointStatus)
-        val penaltyStart = calculatePenaltyStart(penaltyEducationComplete, penaltyLevel)
-        
+        val penaltyStart = calculatePenaltyStart(penaltyEducationComplete)
+
         pointStatusSpi.applyPointStatusChanges(penaltyStart)
         pointHistorySpi.saveUserListPointHistory(userId, point)
     }
@@ -86,7 +85,8 @@ class PointHistoryApiImpl(
         return pointStatusAfterLevelUp.penaltyEducationComplete()
     }
 
-    private fun calculatePenaltyStart(penaltyEducationComplete: PointStatus, penaltyLevel: List<Int>): PointStatus {
+    private fun calculatePenaltyStart(penaltyEducationComplete: PointStatus): PointStatus {
+        val penaltyLevel = listOf(15, 20, 25, 35, 45)
         return if (penaltyEducationComplete.badPoint >= penaltyLevel[penaltyEducationComplete.penaltyLevel - 1]) {
             penaltyEducationComplete.penaltyEducationStart()
         } else {

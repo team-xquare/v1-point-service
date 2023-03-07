@@ -68,7 +68,6 @@ class PointHistoryRepository(
         }
     }
 
-
     private suspend fun Mutiny.Session.persistPointHistoryEntityConcurrently(pointHistoryEntity: PointHistoryEntity) =
         this@persistPointHistoryEntityConcurrently.persist(pointHistoryEntity).awaitSuspending()
 

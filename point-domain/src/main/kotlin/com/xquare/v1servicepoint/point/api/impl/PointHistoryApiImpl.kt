@@ -78,8 +78,7 @@ class PointHistoryApiImpl(
                 if (penaltyEducationComplete.badPoint >= penaltyLevel[penaltyEducationComplete.penaltyLevel - 1]) {
                     val penaltyLevel = penaltyEducationComplete.penaltyEducationStart()
                     pointStatusSpi.applyPointStatusChanges(penaltyLevel)
-                }
-                else {
+                } else {
                     val penaltyLevel = penaltyEducationComplete.penaltyEducationComplete()
                     pointStatusSpi.applyPointStatusChanges(penaltyLevel)
                 }

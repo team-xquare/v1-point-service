@@ -94,14 +94,13 @@ class PointRepository(
         }?.let { pointMapper.pointEntityToDomain(it) }
     }
 
-
     private suspend fun ReactiveQueryFactory.findByReasonAndTypeIn(reason: String, type: Boolean): PointEntity? {
         return this.singleQueryOrNull<PointEntity> {
             select(entity(PointEntity::class))
             from(entity(PointEntity::class))
             where(
                 col(PointEntity::reason).`in`(reason)
-                    .and(col(PointEntity::type).`in`(type))
+                    .and(col(PointEntity::type).`in`(type)),
             )
         }
     }

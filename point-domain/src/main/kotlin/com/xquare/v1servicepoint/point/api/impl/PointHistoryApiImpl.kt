@@ -74,10 +74,7 @@ class PointHistoryApiImpl(
         val point = pointSpi.findAllByReason(POINT_REASON)
         val penaltyEducationComplete = applyPenaltyStatusChanges(userPointStatus)
         val penaltyStart = calculatePenaltyStart(penaltyEducationComplete, penaltyLevel)
-
-        println(point)
-        println(penaltyEducationComplete)
-        println(penaltyStart)
+        
         pointStatusSpi.applyPointStatusChanges(penaltyStart)
         pointHistorySpi.saveUserListPointHistory(userId, point)
     }

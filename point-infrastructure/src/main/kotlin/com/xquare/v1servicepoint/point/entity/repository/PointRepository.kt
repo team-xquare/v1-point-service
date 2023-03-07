@@ -88,20 +88,19 @@ class PointRepository(
         }
     }
 
-    override suspend fun findByReasonAndType(reason: String, type: Boolean): Point? {
-        return reactiveQueryFactory.withFactory { _, reactiveQueryFactory ->
-            reactiveQueryFactory.findByReasonAndTypeIn(reason, type)
-        }?.let { pointMapper.pointEntityToDomain(it) }
+    override suspend fun findAllByReason(reason: String): List<Point> {
+        val pointEntityList = reactiveQueryFactory.withFactory { _, reactiveQueryFactory ->
+            reactiveQueryFactory.findAllByReasonIn(reason)
+        }
+
+        return pointEntityList.map { pointMapper.pointEntityToDomain(it) }
     }
 
-    private suspend fun ReactiveQueryFactory.findByReasonAndTypeIn(reason: String, type: Boolean): PointEntity? {
-        return this.singleQueryOrNull<PointEntity> {
+    private suspend fun ReactiveQueryFactory.findAllByReasonIn(reason: String): List<PointEntity> {
+        return this.listQuery<PointEntity> {
             select(entity(PointEntity::class))
             from(entity(PointEntity::class))
-            where(
-                col(PointEntity::reason).`in`(reason)
-                    .and(col(PointEntity::type).`in`(type)),
-            )
+            where(col(PointEntity::reason).`in`(reason))
         }
     }
 }

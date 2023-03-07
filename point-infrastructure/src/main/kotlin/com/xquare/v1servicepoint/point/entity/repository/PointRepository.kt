@@ -87,4 +87,22 @@ class PointRepository(
             orderBy(col(PointEntity::point).asc())
         }
     }
+
+    override suspend fun findByReasonAndType(reason: String, type: Boolean): Point? {
+        return reactiveQueryFactory.withFactory { _, reactiveQueryFactory ->
+            reactiveQueryFactory.findByReasonAndTypeIn(reason, type)
+        }?.let { pointMapper.pointEntityToDomain(it) }
+    }
+
+
+    private suspend fun ReactiveQueryFactory.findByReasonAndTypeIn(reason: String, type: Boolean): PointEntity? {
+        return this.singleQueryOrNull<PointEntity> {
+            select(entity(PointEntity::class))
+            from(entity(PointEntity::class))
+            where(
+                col(PointEntity::reason).`in`(reason)
+                    .and(col(PointEntity::type).`in`(type))
+            )
+        }
+    }
 }

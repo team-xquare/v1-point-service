@@ -27,8 +27,7 @@ class ExcelSpiImpl(
         val userPointStatus = userSpi.getUserInfo(pointStatus.map { it.userId })
         val goodPointHistory = pointHistorySpi.findAllByIdAndType(userPointStatus.map { it.id }, true)
         val badPointHistory = pointHistorySpi.findAllByIdAndType(userPointStatus.map { it.id }, false)
-
-        val data: List<List<Any>> = userPointStatus.map { user ->
+        val data: List<List<String>> = userPointStatus.map { user ->
             val pointStatus1 = pointStatus.find { it.userId == user.id }
                 ?: throw UserNotFoundException(UserNotFoundException.USER_ID_NOT_FOUND)
 
@@ -54,7 +53,7 @@ class ExcelSpiImpl(
                     .replace("{", "[")
                     .replace("}", "]"),
             )
-        }
+        }.sortedBy { it[1] }
 
         val createExcelSheet = createExcelSheet(attributes, data)
         val workbook: Workbook = WorkbookFactory.create(createExcelSheet.inputStream())

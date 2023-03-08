@@ -46,7 +46,6 @@ class ExcelSpiImpl(
                 userStatus.badPoint.toString(),
                 goodPointHistoryString.replace(Regex("[\\[\\]]"), ""),
                 badPointHistoryString.replace(Regex("[\\[\\]]"), ""),
-
                 )
         }.sortedBy { it[1] }
 

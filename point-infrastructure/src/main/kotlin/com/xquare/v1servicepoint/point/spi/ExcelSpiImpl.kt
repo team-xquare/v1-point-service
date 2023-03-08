@@ -28,14 +28,14 @@ class ExcelSpiImpl(
         val goodPointHistory = pointHistorySpi.findAllByIdAndType(userPointStatus.map { it.id }, true)
         val badPointHistory = pointHistorySpi.findAllByIdAndType(userPointStatus.map { it.id }, false)
         val data: List<List<String>> = userPointStatus.map { user ->
-            val pointStatus1 = pointStatus.find { it.userId == user.id }
+            val userStatus = pointStatus.find { it.userId == user.id }
                 ?: throw UserNotFoundException(UserNotFoundException.USER_ID_NOT_FOUND)
 
             listOf(
                 user.grade.toString() + user.classNum.toString() + user.num.toString().padStart(2, '0'),
                 user.name,
-                pointStatus1.goodPoint.toString(),
-                pointStatus1.badPoint.toString(),
+                userStatus.goodPoint.toString(),
+                userStatus.badPoint.toString(),
                 goodPointHistory.map { pointStatus ->
                     "{${pointStatus.date}} ${pointStatus.reason} (${pointStatus.point}점)\n"
                 }.toString()

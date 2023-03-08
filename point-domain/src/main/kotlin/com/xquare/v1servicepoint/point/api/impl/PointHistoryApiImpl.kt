@@ -31,6 +31,7 @@ class PointHistoryApiImpl(
 
     companion object {
         const val POINT_REASON = "벌점 봉사 완료"
+        val PENALTY_LEVEL = listOf(15, 20, 25, 30, 35, 40, 45)
     }
 
     override suspend fun saveUserPoint(userId: UUID, givePointUserRequest: DomainGivePointUserRequest) {
@@ -48,10 +49,7 @@ class PointHistoryApiImpl(
 
             false -> {
                 val addBadPoint = pointStatus.addBadPoint(getPointByPointId.point)
-
-                val penaltyLevel = listOf(15, 20, 25, 30, 35, 40, 45)
-
-                if (addBadPoint.badPoint >= penaltyLevel[addBadPoint.penaltyLevel - 1]) {
+                if (addBadPoint.badPoint >= PENALTY_LEVEL[addBadPoint.penaltyLevel - 1]) {
                     val penaltyLevel = addBadPoint.penaltyEducationStart()
                     pointStatusSpi.applyPointStatusChanges(penaltyLevel)
                 } else {
@@ -86,8 +84,7 @@ class PointHistoryApiImpl(
     }
 
     private fun calculatePenaltyStart(penaltyEducationComplete: PointStatus): PointStatus {
-        val penaltyLevel = listOf(15, 20, 25, 35, 45)
-        return if (penaltyEducationComplete.badPoint >= penaltyLevel[penaltyEducationComplete.penaltyLevel - 1]) {
+        return if (penaltyEducationComplete.badPoint >= PENALTY_LEVEL[penaltyEducationComplete.penaltyLevel - 1]) {
             penaltyEducationComplete.penaltyEducationStart()
         } else {
             penaltyEducationComplete.penaltyEducationComplete()

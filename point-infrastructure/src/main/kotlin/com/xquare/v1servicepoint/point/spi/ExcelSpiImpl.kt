@@ -31,28 +31,23 @@ class ExcelSpiImpl(
             val userStatus = pointStatus.find { it.userId == user.id }
                 ?: throw UserNotFoundException(UserNotFoundException.USER_ID_NOT_FOUND)
 
+            val goodPointHistoryString = goodPointHistory.joinToString(separator = "") { pointStatus ->
+                "{${pointStatus.date}} ${pointStatus.reason} (${pointStatus.point}점)\n"
+            }
+
+            val badPointHistoryString = badPointHistory.joinToString(separator = "") { pointStatus ->
+                "{${pointStatus.date}} ${pointStatus.reason} (${pointStatus.point}점)\n"
+            }
+
             listOf(
                 user.grade.toString() + user.classNum.toString() + user.num.toString().padStart(2, '0'),
                 user.name,
                 userStatus.goodPoint.toString(),
                 userStatus.badPoint.toString(),
-                goodPointHistory.map { pointStatus ->
-                    "{${pointStatus.date}} ${pointStatus.reason} (${pointStatus.point}점)\n"
-                }.toString()
-                    .replace(",", "")
-                    .replace("[", "")
-                    .replace("]", "")
-                    .replace("{", "[")
-                    .replace("}", "]"),
-                badPointHistory.map { pointStatus ->
-                    "{${pointStatus.date}} ${pointStatus.reason} (${pointStatus.point}점)\n"
-                }.toString()
-                    .replace(",", "")
-                    .replace("[", "")
-                    .replace("]", "")
-                    .replace("{", "[")
-                    .replace("}", "]"),
-            )
+                goodPointHistoryString.replace(Regex("[\\[\\]]"), ""),
+                badPointHistoryString.replace(Regex("[\\[\\]]"), ""),
+
+                )
         }.sortedBy { it[1] }
 
         val createExcelSheet = createExcelSheet(attributes, data)

@@ -18,7 +18,6 @@ class ExcelSpiImpl(
     private val userSpi: UserSpi,
     private val pointStatusSpi: PointStatusSpi,
     private val pointHistorySpi: PointHistorySpi,
-
 ) : ExcelSpi {
 
     override suspend fun writeUserPointHistoryExcelFile(): ByteArray {

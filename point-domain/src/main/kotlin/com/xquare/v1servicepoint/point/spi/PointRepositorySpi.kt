@@ -15,4 +15,6 @@ interface PointRepositorySpi {
     suspend fun savePointRole(point: Point)
 
     suspend fun findAllByType(type: Boolean): List<Point>
+
+    suspend fun findAllByReason(reason: String): List<Point>
 }

@@ -29,6 +29,11 @@ class PointHistoryApiImpl(
     private val excelSpi: ExcelSpi,
 ) : PointHistoryApi {
 
+    companion object {
+        const val POINT_REASON = "벌점 봉사 완료"
+        val PENALTY_LEVEL = listOf(15, 20, 25, 30, 35, 40, 45)
+    }
+
     override suspend fun saveUserPoint(userId: UUID, givePointUserRequest: DomainGivePointUserRequest) {
         val getPointByPointId: Point = pointSpi.findByPointId(givePointUserRequest.pointId)
             ?: throw PointNotFoundException(PointNotFoundException.POINT_NOT_FOUND)
@@ -36,7 +41,7 @@ class PointHistoryApiImpl(
         val pointStatus: PointStatus = pointStatusSpi.findByUserId(userId)
             ?: throw UserNotFoundException(UserNotFoundException.USER_ID_NOT_FOUND)
 
-        when(getPointByPointId.type) {
+        when (getPointByPointId.type) {
             true -> {
                 val addGoodPoint = pointStatus.addGoodPoint(getPointByPointId.point)
                 pointStatusSpi.applyPointStatusChanges(addGoodPoint)
@@ -44,10 +49,7 @@ class PointHistoryApiImpl(
 
             false -> {
                 val addBadPoint = pointStatus.addBadPoint(getPointByPointId.point)
-
-                val penaltyLevel = listOf(15, 20, 25, 30, 35, 40, 45)
-
-                if (addBadPoint.badPoint >= penaltyLevel[addBadPoint.penaltyLevel - 1]) {
+                if (addBadPoint.badPoint >= PENALTY_LEVEL[addBadPoint.penaltyLevel - 1]) {
                     val penaltyLevel = addBadPoint.penaltyEducationStart()
                     pointStatusSpi.applyPointStatusChanges(penaltyLevel)
                 } else {
@@ -55,7 +57,38 @@ class PointHistoryApiImpl(
                 }
             }
         }
-        pointHistorySpi.saveUserPoint(userId, getPointByPointId.id)
+        pointHistorySpi.saveUserPointHistory(userId, getPointByPointId.id)
+    }
+
+    override suspend fun saveUserPenaltyEducationComplete(userId: UUID) {
+        val userPointStatus = pointStatusSpi.findByUserId(userId)
+            ?: throw UserNotFoundException(UserNotFoundException.USER_ID_NOT_FOUND)
+
+        if (!userPointStatus.isPenaltyRequired) {
+            throw UserPenaltyExistException(UserPenaltyExistException.USER_PENALTY_EXIST)
+        }
+
+        val point = pointSpi.findAllByReason(POINT_REASON)
+        val penaltyEducationComplete = applyPenaltyStatusChanges(userPointStatus)
+        val penaltyStart = calculatePenaltyStart(penaltyEducationComplete)
+
+        pointStatusSpi.applyPointStatusChanges(penaltyStart)
+        pointHistorySpi.saveUserListPointHistory(userId, point)
+    }
+
+    private fun applyPenaltyStatusChanges(pointStatus: PointStatus): PointStatus {
+        val pointStatusMinusGoodPoint = pointStatus.penaltyEducationCompleteAndMinusGoodPoint()
+        val pointStatusMinusBadPoint = pointStatusMinusGoodPoint.penaltyEducationCompleteAndMinusBadPoint()
+        val pointStatusAfterLevelUp = pointStatusMinusBadPoint.penaltyLevelUp()
+        return pointStatusAfterLevelUp.penaltyEducationComplete()
+    }
+
+    private fun calculatePenaltyStart(penaltyEducationComplete: PointStatus): PointStatus {
+        return if (penaltyEducationComplete.badPoint >= PENALTY_LEVEL[penaltyEducationComplete.penaltyLevel - 1]) {
+            penaltyEducationComplete.penaltyEducationStart()
+        } else {
+            penaltyEducationComplete.penaltyEducationComplete()
+        }
     }
 
     override suspend fun deleteUserPoint(studentId: UUID, historyId: UUID) {
@@ -122,28 +155,6 @@ class PointHistoryApiImpl(
             isPenaltyRequired = false,
         )
         pointStatusSpi.savePointStatus(pointStatus)
-    }
-
-    override suspend fun saveUserPenaltyEducationComplete(userId: UUID) {
-        val pointStatus = pointStatusSpi.findByUserId(userId)
-            ?: throw UserNotFoundException(UserNotFoundException.USER_ID_NOT_FOUND)
-
-        when (pointStatus.isPenaltyRequired) {
-            false -> throw UserPenaltyExistException(UserPenaltyExistException.USER_PENALTY_EXIST)
-            true -> {
-                val penaltyEducationComplete = pointStatus.penaltyEducationCompleteAndMinusGoodPoint().penaltyEducationCompleteAndMinusBadPoint().penaltyEducationComplete().penaltyLevelUp()
-                val penaltyLevel = listOf(15, 20, 25, 35, 45)
-
-                if (penaltyEducationComplete.badPoint >= penaltyLevel[penaltyEducationComplete.penaltyLevel - 1]) {
-                    val penaltyLevel = penaltyEducationComplete.penaltyEducationStart()
-                    pointStatusSpi.applyPointStatusChanges(penaltyLevel)
-                }
-                else {
-                    val penaltyLevel = penaltyEducationComplete.penaltyEducationComplete()
-                    pointStatusSpi.applyPointStatusChanges(penaltyLevel)
-                }
-            }
-        }
     }
 
     override suspend fun queryUserPointHistoryExcel(): ExportUserPointStatusResponse {

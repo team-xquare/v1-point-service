@@ -18,7 +18,6 @@ class ExcelSpiImpl(
     private val userSpi: UserSpi,
     private val pointStatusSpi: PointStatusSpi,
     private val pointHistorySpi: PointHistorySpi,
-
 ) : ExcelSpi {
 
     override suspend fun writeUserPointHistoryExcelFile(): ByteArray {
@@ -27,36 +26,29 @@ class ExcelSpiImpl(
         val userPointStatus = userSpi.getUserInfo(pointStatus.map { it.userId })
         val goodPointHistory = pointHistorySpi.findAllByIdAndType(userPointStatus.map { it.id }, true)
         val badPointHistory = pointHistorySpi.findAllByIdAndType(userPointStatus.map { it.id }, false)
-
-        val data: List<List<Any>> = userPointStatus.map { user ->
-            val pointStatus1 = pointStatus.find { it.userId == user.id }
+        val userData: List<List<String>> = userPointStatus.map { user ->
+            val userStatus = pointStatus.find { it.userId == user.id }
                 ?: throw UserNotFoundException(UserNotFoundException.USER_ID_NOT_FOUND)
+
+            val goodPointHistoryString = goodPointHistory.joinToString(separator = "") { pointStatus ->
+                "{${pointStatus.date}} ${pointStatus.reason} (${pointStatus.point}점)\n"
+            }
+
+            val badPointHistoryString = badPointHistory.joinToString(separator = "") { pointStatus ->
+                "{${pointStatus.date}} ${pointStatus.reason} (${pointStatus.point}점)\n"
+            }
 
             listOf(
                 user.grade.toString() + user.classNum.toString() + user.num.toString().padStart(2, '0'),
                 user.name,
-                pointStatus1.goodPoint.toString(),
-                pointStatus1.badPoint.toString(),
-                goodPointHistory.map { pointStatus ->
-                    "{${pointStatus.date}} ${pointStatus.reason} (${pointStatus.point}점)\n"
-                }.toString()
-                    .replace(",", "")
-                    .replace("[", "")
-                    .replace("]", "")
-                    .replace("{", "[")
-                    .replace("}", "]"),
-                badPointHistory.map { pointStatus ->
-                    "{${pointStatus.date}} ${pointStatus.reason} (${pointStatus.point}점)\n"
-                }.toString()
-                    .replace(",", "")
-                    .replace("[", "")
-                    .replace("]", "")
-                    .replace("{", "[")
-                    .replace("}", "]"),
+                userStatus.goodPoint.toString(),
+                userStatus.badPoint.toString(),
+                goodPointHistoryString.replace(Regex("[\\[\\]]"), ""),
+                badPointHistoryString.replace(Regex("[\\[\\]]"), ""),
             )
-        }
+        }.sortedBy { it[1] }
 
-        val createExcelSheet = createExcelSheet(attributes, data)
+        val createExcelSheet = createExcelSheet(attributes, userData)
         val workbook: Workbook = WorkbookFactory.create(createExcelSheet.inputStream())
         val outputStream = ByteArrayOutputStream()
         workbook.write(outputStream)

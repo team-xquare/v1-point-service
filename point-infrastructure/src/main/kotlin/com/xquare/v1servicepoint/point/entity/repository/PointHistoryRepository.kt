@@ -34,7 +34,7 @@ class PointHistoryRepository(
     private val pointMapper: PointMapper,
 ) : PointHistorySpi {
 
-    override suspend fun saveUserPoint(userId: UUID, pointId: UUID) {
+    override suspend fun saveUserPointHistory(userId: UUID, pointId: UUID) {
         val pointDomainToSave = pointHistoryMapper.pointHistoryDomainToEntity(
             PointHistory(
                 id = UUID.randomUUID(),
@@ -46,6 +46,25 @@ class PointHistoryRepository(
 
         reactiveQueryFactory.transactionWithFactory { session, _ ->
             session.persistPointHistoryEntityConcurrently(pointDomainToSave)
+        }
+    }
+
+    override suspend fun saveUserListPointHistory(userId: UUID, pointIds: List<Point>) {
+        val pointDomainToSave = pointIds.map {
+            pointHistoryMapper.pointHistoryDomainToEntity(
+                PointHistory(
+                    id = UUID.randomUUID(),
+                    date = LocalDate.now(),
+                    userId = userId,
+                    pointId = it.id,
+                ),
+            )
+        }
+
+        reactiveQueryFactory.transactionWithFactory { session, _ ->
+            pointDomainToSave.forEach {
+                session.persistPointHistoryEntityConcurrently(it)
+            }
         }
     }
 

@@ -87,4 +87,20 @@ class PointRepository(
             orderBy(col(PointEntity::point).asc())
         }
     }
+
+    override suspend fun findAllByReason(reason: String): List<Point> {
+        val pointEntityList = reactiveQueryFactory.withFactory { _, reactiveQueryFactory ->
+            reactiveQueryFactory.findAllByReasonIn(reason)
+        }
+
+        return pointEntityList.map { pointMapper.pointEntityToDomain(it) }
+    }
+
+    private suspend fun ReactiveQueryFactory.findAllByReasonIn(reason: String): List<PointEntity> {
+        return this.listQuery<PointEntity> {
+            select(entity(PointEntity::class))
+            from(entity(PointEntity::class))
+            where(col(PointEntity::reason).`in`(reason))
+        }
+    }
 }

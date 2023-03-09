@@ -51,7 +51,7 @@ class PointHistoryApiImpl(
 
             false -> {
                 val addBadPoint = pointStatus.addBadPoint(getPointByPointId.point)
-                if (addBadPoint.badPoint >= penaltyLevelList[max(addBadPoint.penaltyLevel - 1, 0)]) {
+                if (!addBadPoint.isPenaltyRequired && addBadPoint.badPoint >= penaltyLevelList[addBadPoint.penaltyLevel]) {
                     val penaltyLevel = addBadPoint.penaltyEducationStart().penaltyLevelUp()
                     pointStatusSpi.applyPointStatusChanges(penaltyLevel)
                 } else {
@@ -86,7 +86,7 @@ class PointHistoryApiImpl(
     }
 
     private fun calculatePenaltyStart(penaltyEducationComplete: PointStatus): PointStatus {
-        val penaltyLevelList = listOf(15, 20, 25, 30, 35, 40, 45)
+        val penaltyLevelList = listOf(15, 20, 25, 30, 35, 45)
         return if (penaltyEducationComplete.badPoint >= penaltyLevelList[penaltyEducationComplete.penaltyLevel - 1]) {
             penaltyEducationComplete.penaltyEducationStart()
         } else {

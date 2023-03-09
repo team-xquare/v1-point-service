@@ -20,7 +20,6 @@ import com.xquare.v1servicepoint.point.spi.PointStatusSpi
 import java.nio.charset.Charset
 import java.time.LocalDate
 import java.util.UUID
-import kotlin.math.max
 
 @UseCase
 class PointHistoryApiImpl(

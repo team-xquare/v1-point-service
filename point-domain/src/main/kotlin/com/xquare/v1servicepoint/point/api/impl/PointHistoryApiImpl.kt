@@ -80,14 +80,14 @@ class PointHistoryApiImpl(
     private fun applyPenaltyStatusChanges(pointStatus: PointStatus): PointStatus {
         val pointStatusMinusGoodPoint = pointStatus.penaltyEducationCompleteAndMinusGoodPoint()
         val pointStatusMinusBadPoint = pointStatusMinusGoodPoint.penaltyEducationCompleteAndMinusBadPoint()
-        val pointStatusAfterLevelUp = pointStatusMinusBadPoint.penaltyLevelUp()
-        return pointStatusAfterLevelUp.penaltyEducationComplete()
+        return pointStatusMinusBadPoint.penaltyEducationComplete()
     }
 
     private fun calculatePenaltyStart(penaltyEducationComplete: PointStatus): PointStatus {
         val penaltyLevelList = listOf(15, 20, 25, 30, 35, 45)
+        val penaltyLevelUp = penaltyEducationComplete.penaltyLevelUp()
         return if (penaltyEducationComplete.badPoint >= penaltyLevelList[penaltyEducationComplete.penaltyLevel - 1]) {
-            penaltyEducationComplete.penaltyEducationStart()
+            penaltyLevelUp.penaltyEducationStart()
         } else {
             penaltyEducationComplete.penaltyEducationComplete()
         }

@@ -20,6 +20,7 @@ import com.xquare.v1servicepoint.point.spi.PointStatusSpi
 import java.nio.charset.Charset
 import java.time.LocalDate
 import java.util.UUID
+import kotlin.math.max
 
 @UseCase
 class PointHistoryApiImpl(
@@ -40,8 +41,7 @@ class PointHistoryApiImpl(
         val pointStatus: PointStatus = pointStatusSpi.findByUserId(userId)
             ?: throw UserNotFoundException(UserNotFoundException.USER_ID_NOT_FOUND)
 
-        val penaltyLevelList = listOf(15, 20, 25, 30, 35, 40, 45)
-
+        val penaltyLevelList = listOf(15, 20, 25, 30, 35, 45)
 
         when (getPointByPointId.type) {
             true -> {
@@ -51,8 +51,8 @@ class PointHistoryApiImpl(
 
             false -> {
                 val addBadPoint = pointStatus.addBadPoint(getPointByPointId.point)
-                if (addBadPoint.badPoint >= penaltyLevelList[addBadPoint.penaltyLevel - 1]) {
-                    val penaltyLevel = addBadPoint.penaltyEducationStart()
+                if (addBadPoint.badPoint >= penaltyLevelList[max(addBadPoint.penaltyLevel - 1, 0)]) {
+                    val penaltyLevel = addBadPoint.penaltyEducationStart().penaltyLevelUp()
                     pointStatusSpi.applyPointStatusChanges(penaltyLevel)
                 } else {
                     pointStatusSpi.applyPointStatusChanges(addBadPoint)

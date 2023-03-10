@@ -57,17 +57,17 @@ class ExcelSpiImpl(
 
     private fun createExcelSheet(
         attributes: List<String>,
-        datasList: List<List<Any>>,
+        dataList: List<List<Any>>,
     ): ByteArray {
         val workbook = XSSFWorkbook()
         val sheet = workbook.createSheet()
 
         val headerRow = sheet.createRow(0)
-        insertDatasAtRow(headerRow, attributes, getHeaderCellStyle(workbook))
+        insertDataListAtRow(headerRow, attributes, getHeaderCellStyle(workbook))
 
-        datasList.forEachIndexed { idx, datas ->
+        dataList.forEachIndexed { idx, data ->
             val row = sheet.createRow(idx + 1)
-            insertDatasAtRow(row, datas, getDefaultCellStyle(workbook))
+            insertDataListAtRow(row, data, getDefaultCellStyle(workbook))
         }
 
         ByteArrayOutputStream().use { stream ->
@@ -76,7 +76,7 @@ class ExcelSpiImpl(
         }
     }
 
-    private fun insertDatasAtRow(
+    private fun insertDataListAtRow(
         headerRow: XSSFRow,
         attributes: List<Any>,
         style: XSSFCellStyle,

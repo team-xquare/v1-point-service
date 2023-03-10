@@ -160,8 +160,10 @@ class PointHistoryApiImpl(
     }
 
     override suspend fun queryUserPointHistoryExcel(): ExportUserPointStatusResponse {
-        val fileName =
-            String("상벌점 부여내역 ${LocalDate.now()}.xlsx".toByteArray(charset("UTF-8")), Charset.forName("ISO-8859-1"))
+        val fileName = String(
+            bytes = "상벌점 부여내역 ${LocalDate.now()}.xlsx".toByteArray(charset("UTF-8")),
+            charset = Charset.forName("ISO-8859-1")
+        )
 
         return ExportUserPointStatusResponse(
             file = excelSpi.writeUserPointHistoryExcelFile(),

@@ -24,16 +24,16 @@ class ExcelSpiImpl(
         val attributes = listOf("학번", "이름", "상점", "벌점", "상점내역", "벌점내역", "교육 단계")
         val pointStatus = pointStatusSpi.findAll()
         val userPointStatus = userSpi.getUserInfo(pointStatus.map { it.userId })
-        val goodPointHistory = pointHistorySpi.findAllByIdAndType(userPointStatus.map { it.id }, true)
-        val badPointHistory = pointHistorySpi.findAllByIdAndType(userPointStatus.map { it.id }, false)
         val userData: List<List<String>> = userPointStatus.map { user ->
             val userStatus = pointStatus.find { it.userId == user.id }
                 ?: throw UserNotFoundException(UserNotFoundException.USER_ID_NOT_FOUND)
 
+            val goodPointHistory = pointHistorySpi.findAllByIdAndType(listOf(user.id), true)
             val goodPointHistoryString = goodPointHistory.joinToString(separator = "") { pointStatus ->
                 "{${pointStatus.date}} ${pointStatus.reason} (${pointStatus.point}점)\n"
             }
 
+            val badPointHistory = pointHistorySpi.findAllByIdAndType(listOf(user.id), false)
             val badPointHistoryString = badPointHistory.joinToString(separator = "") { pointStatus ->
                 "{${pointStatus.date}} ${pointStatus.reason} (${pointStatus.point}점)\n"
             }
@@ -46,7 +46,7 @@ class ExcelSpiImpl(
                 goodPointHistoryString.replace(Regex("[\\[\\]]"), ""),
                 badPointHistoryString.replace(Regex("[\\[\\]]"), ""),
             )
-        }.sortedBy { it[1] }
+        }
 
         val createExcelSheet = createExcelSheet(attributes, userData)
         val workbook: Workbook = WorkbookFactory.create(createExcelSheet.inputStream())

@@ -48,7 +48,7 @@ class ExcelSpiImpl(
                 goodPointHistoryString.replace(Regex("[\\[\\]]"), ""),
                 badPointHistoryString.replace(Regex("[\\[\\]]"), ""),
             )
-        }.sortedBy { it[1] }
+        }.sortedBy { it[0] } // 학번순으로 정렬
 
         val createExcelSheet = createExcelSheet(attributes, userData)
         val workbook: Workbook = WorkbookFactory.create(createExcelSheet.inputStream())
@@ -95,14 +95,15 @@ class ExcelSpiImpl(
             .apply {
                 fillForegroundColor = IndexedColors.GREY_25_PERCENT.index
                 fillPattern = CellStyle.SOLID_FOREGROUND
-                alignment = HorizontalAlignment.LEFT.ordinal.toShort()
+                alignment = CellStyle.ALIGN_CENTER
                 verticalAlignment = VerticalAlignment.CENTER.ordinal.toShort()
             }
 
     private fun getDefaultCellStyle(workbook: XSSFWorkbook): XSSFCellStyle =
         workbook.createCellStyle()
             .apply {
-                alignment = HorizontalAlignment.LEFT.ordinal.toShort()
+                alignment = CellStyle.ALIGN_CENTER
                 verticalAlignment = VerticalAlignment.CENTER.ordinal.toShort()
+                wrapText = true
             }
 }

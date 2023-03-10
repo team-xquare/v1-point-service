@@ -15,23 +15,18 @@ import com.xquare.v1servicepoint.point.api.dto.response.PointHistoryExcelElement
 import com.xquare.v1servicepoint.point.entity.PointEntity
 import com.xquare.v1servicepoint.point.entity.PointHistoryEntity
 import com.xquare.v1servicepoint.point.mapper.PointHistoryMapper
-import com.xquare.v1servicepoint.point.mapper.PointMapper
 import com.xquare.v1servicepoint.point.spi.PointHistorySpi
-import com.xquare.v1servicepoint.point.spi.PointSpi
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import org.hibernate.reactive.mutiny.Mutiny
-import org.hibernate.sql.Select
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
-import java.util.UUID
+import java.util.*
 import javax.persistence.criteria.JoinType
 
 @Repository
 class PointHistoryRepository(
     private val reactiveQueryFactory: HibernateMutinyReactiveQueryFactory,
     private val pointHistoryMapper: PointHistoryMapper,
-    private val pointSpi: PointSpi,
-    private val pointMapper: PointMapper,
 ) : PointHistorySpi {
 
     override suspend fun saveUserPointHistory(userId: UUID, pointId: UUID) {
@@ -175,13 +170,14 @@ class PointHistoryRepository(
         }.firstOrNull()
     }
 
-    override suspend fun findAllByIdAndType(idList: List<UUID>, type: Boolean?): List<PointHistoryExcelElement> {
+    override suspend fun findAllByType(type: Boolean?): List<PointHistoryExcelElement> {
         val pointHistory = reactiveQueryFactory.transactionWithFactory { _, reactiveQueryFactory ->
-            reactiveQueryFactory.findAllByIdAndType(idList, type)
+            reactiveQueryFactory.findAllType(type)
         }
 
         return pointHistory.map {
             PointHistoryExcelElement(
+                userId = it.userId,
                 date = it.date,
                 reason = it.reason,
                 pointType = it.pointType,
@@ -190,10 +186,11 @@ class PointHistoryRepository(
         }
     }
 
-    private suspend fun ReactiveQueryFactory.findAllByIdAndType(ids: List<UUID>, type: Boolean?): List<PointHistoryExcelElement> {
+    private suspend fun ReactiveQueryFactory.findAllType(type: Boolean?): List<PointHistoryExcelElement> {
         return this.listQuery {
             select(
                 listOf(
+                    col(PointHistoryEntity::userId),
                     col(PointHistoryEntity::date),
                     col(PointEntity::reason),
                     col(PointEntity::type),
@@ -204,7 +201,6 @@ class PointHistoryRepository(
             join(PointHistoryEntity::point, JoinType.LEFT)
             where(
                 and(
-                    col(PointHistoryEntity::userId).`in`(ids),
                     type?.let { col(PointEntity::type).equal(type) },
                 ),
             )

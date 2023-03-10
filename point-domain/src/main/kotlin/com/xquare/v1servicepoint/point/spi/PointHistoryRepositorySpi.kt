@@ -5,13 +5,14 @@ import com.xquare.v1servicepoint.point.Point
 import com.xquare.v1servicepoint.point.PointHistory
 import com.xquare.v1servicepoint.point.api.dto.response.PointHistoryElement
 import com.xquare.v1servicepoint.point.api.dto.response.PointHistoryExcelElement
-import java.util.UUID
+import java.util.*
 
 @Spi
 interface PointHistoryRepositorySpi {
     suspend fun saveUserPointHistory(userId: UUID, pointId: UUID)
 
     suspend fun saveUserListPointHistory(userId: UUID, pointIds: List<Point>)
+
     suspend fun findByIdAndStudentId(id: UUID, studentId: UUID): PointHistory?
 
     suspend fun deleteByIdAndUserId(pointHistory: PointHistory)
@@ -22,5 +23,5 @@ interface PointHistoryRepositorySpi {
 
     suspend fun findByUserId(userId: UUID): PointHistory?
 
-    suspend fun findAllByIdAndType(idList: List<UUID>, type: Boolean?): List<PointHistoryExcelElement>
+    suspend fun findAllByType(type: Boolean?): List<PointHistoryExcelElement>
 }

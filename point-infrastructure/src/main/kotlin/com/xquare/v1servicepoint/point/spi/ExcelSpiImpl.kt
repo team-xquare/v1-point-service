@@ -46,7 +46,7 @@ class ExcelSpiImpl(
                 goodPointHistoryString.replace(Regex("[\\[\\]]"), ""),
                 badPointHistoryString.replace(Regex("[\\[\\]]"), ""),
             )
-        }
+        }.sortedBy { it[1] }
 
         val createExcelSheet = createExcelSheet(attributes, userData)
         val workbook: Workbook = WorkbookFactory.create(createExcelSheet.inputStream())

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
-import java.util.UUID
+import java.util.*
 
 @Component
 class UserSpiImpl(
@@ -31,6 +31,21 @@ class UserSpiImpl(
                 .host(userHost)
                 .path("/users/id")
                 .queryParams(multiValueMap)
+                .build()
+        }.retrieve()
+            .onStatus(HttpStatus::isError) {
+                throw UserRequsetFailedException("Failed request to get user point", it.rawStatusCode())
+            }
+            .awaitBody<DomainUserResponse>().let { it ->
+                it.users.map { it.toDomainResponse() }
+            }
+    }
+
+    override suspend fun getStudent(): List<UserResponse.UserInfoListElement> {
+        return webClient.get().uri {
+            it.scheme(scheme)
+                .host(userHost)
+                .path("/users/all")
                 .build()
         }.retrieve()
             .onStatus(HttpStatus::isError) {

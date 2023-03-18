@@ -30,7 +30,7 @@ class PointHistoryApiImpl(
 ) : PointHistoryApi {
 
     companion object {
-        const val POINT_REASON = "벌점 봉사 완료"
+        const val POINT_REASON = "다벌점 교육 완료"
     }
 
     override suspend fun saveUserPoint(userId: UUID, givePointUserRequest: DomainGivePointUserRequest) {

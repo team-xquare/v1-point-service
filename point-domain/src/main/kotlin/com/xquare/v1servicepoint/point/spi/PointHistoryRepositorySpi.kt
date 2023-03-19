@@ -5,7 +5,7 @@ import com.xquare.v1servicepoint.point.Point
 import com.xquare.v1servicepoint.point.PointHistory
 import com.xquare.v1servicepoint.point.api.dto.response.PointHistoryElement
 import com.xquare.v1servicepoint.point.api.dto.response.PointHistoryExcelElement
-import java.util.*
+import java.util.UUID
 
 @Spi
 interface PointHistoryRepositorySpi {

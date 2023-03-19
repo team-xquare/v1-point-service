@@ -20,7 +20,7 @@ import io.smallrye.mutiny.coroutines.awaitSuspending
 import org.hibernate.reactive.mutiny.Mutiny
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
-import java.util.*
+import java.util.UUID
 import javax.persistence.criteria.JoinType
 
 @Repository

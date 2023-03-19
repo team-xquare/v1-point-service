@@ -86,8 +86,7 @@ class PointRepository(
             where(col(PointEntity::type).`in`(type))
             orderBy(
                 col(PointEntity::reason).asc(),
-                col(PointEntity::point,
-            ).asc())
+                col(PointEntity::point).asc())
         }
     }
 

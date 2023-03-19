@@ -2,7 +2,6 @@ package com.xquare.v1servicepoint.point.spi
 
 import com.xquare.v1servicepoint.point.exception.UserNotFoundException
 import org.apache.poi.ss.usermodel.CellStyle
-import org.apache.poi.ss.usermodel.HorizontalAlignment
 import org.apache.poi.ss.usermodel.IndexedColors
 import org.apache.poi.ss.usermodel.VerticalAlignment
 import org.apache.poi.ss.usermodel.Workbook

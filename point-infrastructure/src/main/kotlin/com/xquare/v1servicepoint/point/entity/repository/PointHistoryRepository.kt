@@ -132,6 +132,7 @@ class PointHistoryRepository(
             )
             from(entity(PointHistoryEntity::class))
             join(PointHistoryEntity::point, JoinType.LEFT)
+            orderBy(col(PointHistoryEntity::date).desc())
             where(
                 and(
                     col(PointHistoryEntity::userId).equal(userId),

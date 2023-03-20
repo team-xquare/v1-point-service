@@ -4,8 +4,6 @@ import com.xquare.v1servicepoint.point.exception.UserNotFoundException
 import org.apache.poi.ss.usermodel.CellStyle
 import org.apache.poi.ss.usermodel.IndexedColors
 import org.apache.poi.ss.usermodel.VerticalAlignment
-import org.apache.poi.ss.usermodel.Workbook
-import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.apache.poi.xssf.usermodel.XSSFCellStyle
 import org.apache.poi.xssf.usermodel.XSSFRow
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
@@ -49,26 +47,24 @@ class ExcelSpiImpl(
             )
         }.sortedBy { it[0] } // 학번순으로 정렬
 
-        val createExcelSheet = createExcelSheet(attributes, userData)
-        val workbook: Workbook = WorkbookFactory.create(createExcelSheet.inputStream())
-        val outputStream = ByteArrayOutputStream()
-        workbook.write(outputStream)
-        return outputStream.toByteArray()
+        return createExcelSheet(attributes, userData, "학생 상벌점 내역")
     }
 
     private fun createExcelSheet(
         attributes: List<String>,
         dataList: List<List<Any>>,
+        sheetName: String,
     ): ByteArray {
         val workbook = XSSFWorkbook()
-        val sheet = workbook.createSheet()
+        val sheet = workbook.createSheet(sheetName)
 
         val headerRow = sheet.createRow(0)
         insertDataListAtRow(headerRow, attributes, getHeaderCellStyle(workbook))
 
-        dataList.forEachIndexed { idx, data ->
+        dataList.forEachIndexed { idx, dataLists ->
+            sheet.autoSizeColumn(idx)
             val row = sheet.createRow(idx + 1)
-            insertDataListAtRow(row, data, getDefaultCellStyle(workbook))
+            insertDataListAtRow(row, dataLists, getDefaultCellStyle(workbook))
         }
 
         ByteArrayOutputStream().use { stream ->

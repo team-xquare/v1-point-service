@@ -205,6 +205,7 @@ class PointHistoryRepository(
                     type?.let { col(PointEntity::type).equal(type) },
                 ),
             )
+            orderBy(col(PointHistoryEntity::date).desc())
         }
     }
 }

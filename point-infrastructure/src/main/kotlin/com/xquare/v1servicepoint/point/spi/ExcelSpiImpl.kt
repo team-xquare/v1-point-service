@@ -64,6 +64,12 @@ class ExcelSpiImpl(
         dataList.forEachIndexed { idx, dataLists ->
             sheet.autoSizeColumn(idx+1)
             sheet.autoSizeColumn(1)
+            sheet.autoSizeColumn(2)
+            sheet.autoSizeColumn(3)
+            sheet.autoSizeColumn(4)
+            sheet.autoSizeColumn(5)
+            sheet.autoSizeColumn(6)
+            sheet.autoSizeColumn(7)
             val row = sheet.createRow(idx + 1)
             insertDataListAtRow(row, dataLists, getDefaultCellStyle(workbook))
         }

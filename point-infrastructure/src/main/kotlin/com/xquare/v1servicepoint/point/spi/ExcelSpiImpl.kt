@@ -61,11 +61,6 @@ class ExcelSpiImpl(
         val headerRow = sheet.createRow(0)
         insertDataListAtRow(headerRow, attributes, getHeaderCellStyle(workbook))
 
-        sheet.autoSizeColumn(3)
-        sheet.autoSizeColumn(4)
-        sheet.autoSizeColumn(5)
-        sheet.autoSizeColumn(6)
-
         dataList.forEachIndexed { idx, dataLists ->
             val row = sheet.createRow(idx + 1)
             sheet.autoSizeColumn(idx + 1)
@@ -73,6 +68,10 @@ class ExcelSpiImpl(
         }
         
         sheet.setColumnWidth(1, 7 * 256)
+        sheet.setColumnWidth(2, 5 * 256)
+        sheet.setColumnWidth(3, 5 * 256)
+        sheet.setColumnWidth(4, 37 * 256)
+        sheet.setColumnWidth(5, 37 * 256)
 
         ByteArrayOutputStream().use { stream ->
             workbook.write(stream)

@@ -18,7 +18,7 @@ class ExcelSpiImpl(
 ) : ExcelSpi {
 
     override suspend fun writeUserPointHistoryExcelFile(): ByteArray {
-        val attributes = listOf("학번", "이름", "상점", "벌점", "상점내역", "벌점내역", "교육 단계")
+        val attributes = listOf("학번", "이름", "상점", "벌점", "상점내역", "벌점내역", "교육 단계", "교육 필요 여부")
         val pointStatus = pointStatusSpi.findAll()
         val userPointStatus = userSpi.getStudent()
         val goodPointHistories = pointHistorySpi.findAllByType(true)
@@ -44,10 +44,16 @@ class ExcelSpiImpl(
                 userStatus.badPoint.toString(),
                 goodPointHistoryString.replace(Regex("[\\[\\]]"), ""),
                 badPointHistoryString.replace(Regex("[\\[\\]]"), ""),
+                userStatus.penaltyLevel.toString(),
+                convertPenaltyRequiredToString(userStatus.isPenaltyRequired),
             )
         }.sortedBy { it[0] } // 학번순으로 정렬
 
         return createExcelSheet(attributes, userData, "학생 상벌점 내역")
+    }
+
+    private fun convertPenaltyRequiredToString(isPenaltyRequired: Boolean): String {
+        return if (isPenaltyRequired) "필요" else "필요 없음"
     }
 
     private fun createExcelSheet(
@@ -70,8 +76,9 @@ class ExcelSpiImpl(
         sheet.setColumnWidth(1, 7 * 256)
         sheet.setColumnWidth(2, 5 * 256)
         sheet.setColumnWidth(3, 5 * 256)
-        sheet.setColumnWidth(4, 37 * 256)
-        sheet.setColumnWidth(5, 37 * 256)
+        sheet.setColumnWidth(4, 45 * 256)
+        sheet.setColumnWidth(5, 45 * 256)
+        sheet.setColumnWidth(6, 10 * 256)
 
         ByteArrayOutputStream().use { stream ->
             workbook.write(stream)

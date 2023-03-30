@@ -79,6 +79,7 @@ class ExcelSpiImpl(
         sheet.setColumnWidth(4, 45 * 256)
         sheet.setColumnWidth(5, 45 * 256)
         sheet.setColumnWidth(6, 10 * 256)
+        sheet.setColumnWidth(6, 15 * 256)
 
         ByteArrayOutputStream().use { stream ->
             workbook.write(stream)

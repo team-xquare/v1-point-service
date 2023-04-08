@@ -9,7 +9,7 @@ import com.linecorp.kotlinjdsl.singleQueryOrNull
 import com.xquare.v1servicepoint.point.Point
 import com.xquare.v1servicepoint.point.entity.PointEntity
 import com.xquare.v1servicepoint.point.mapper.PointMapper
-import com.xquare.v1servicepoint.point.spi.PointSpi
+import com.xquare.v1servicepoint.point.spi.point.PointSpi
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import org.hibernate.reactive.mutiny.Mutiny
 import org.springframework.stereotype.Repository

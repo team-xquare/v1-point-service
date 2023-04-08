@@ -15,7 +15,7 @@ import com.xquare.v1servicepoint.point.api.dto.response.PointHistoryExcelElement
 import com.xquare.v1servicepoint.point.entity.PointEntity
 import com.xquare.v1servicepoint.point.entity.PointHistoryEntity
 import com.xquare.v1servicepoint.point.mapper.PointHistoryMapper
-import com.xquare.v1servicepoint.point.spi.PointHistorySpi
+import com.xquare.v1servicepoint.point.spi.pointhistory.PointHistorySpi
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import org.hibernate.reactive.mutiny.Mutiny
 import org.springframework.stereotype.Repository

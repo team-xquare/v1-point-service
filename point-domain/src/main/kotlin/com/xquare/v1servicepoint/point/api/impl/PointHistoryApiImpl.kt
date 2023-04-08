@@ -10,22 +10,24 @@ import com.xquare.v1servicepoint.point.api.dto.response.PointHistoryListResponse
 import com.xquare.v1servicepoint.point.api.dto.response.PointHistoryListStudentResponse
 import com.xquare.v1servicepoint.point.exception.PointHistoryNotFoundException
 import com.xquare.v1servicepoint.point.exception.PointNotFoundException
-import com.xquare.v1servicepoint.point.exception.UserExistException
 import com.xquare.v1servicepoint.point.exception.UserNotFoundException
-import com.xquare.v1servicepoint.point.exception.UserPenaltyExistException
 import com.xquare.v1servicepoint.point.spi.ExcelSpi
-import com.xquare.v1servicepoint.point.spi.PointHistorySpi
-import com.xquare.v1servicepoint.point.spi.PointSpi
-import com.xquare.v1servicepoint.point.spi.PointStatusSpi
+import com.xquare.v1servicepoint.point.spi.point.QueryPointSpi
+import com.xquare.v1servicepoint.point.spi.pointhistory.CommandPointHistorySpi
+import com.xquare.v1servicepoint.point.spi.pointhistory.QueryPointHistorySpi
+import com.xquare.v1servicepoint.point.spi.pointstatus.CommandPointStatusSpi
+import com.xquare.v1servicepoint.point.spi.pointstatus.QueryPointStatusSpi
 import java.nio.charset.Charset
 import java.time.LocalDate
 import java.util.UUID
 
 @UseCase
 class PointHistoryApiImpl(
-    private val pointHistorySpi: PointHistorySpi,
-    private val pointSpi: PointSpi,
-    private val pointStatusSpi: PointStatusSpi,
+    private val queryPointSpi: QueryPointSpi,
+    private val commandPointStatusSpi: CommandPointStatusSpi,
+    private val queryPointStatusSpi: QueryPointStatusSpi,
+    private val queryPointHistorySpi: QueryPointHistorySpi,
+    private val commandPointHistorySpi: CommandPointHistorySpi,
     private val excelSpi: ExcelSpi,
 ) : PointHistoryApi {
 
@@ -35,110 +37,65 @@ class PointHistoryApiImpl(
     }
 
     override suspend fun saveUserPoint(userId: UUID, givePointUserRequest: DomainGivePointUserRequest) {
-        val getPointByPointId: Point = pointSpi.findByPointId(givePointUserRequest.pointId)
+        val getPointByPointId: Point = queryPointSpi.findByPointId(givePointUserRequest.pointId)
             ?: throw PointNotFoundException(PointNotFoundException.POINT_NOT_FOUND)
 
-        val pointStatus: PointStatus = pointStatusSpi.findByUserId(userId)
+        val pointStatus: PointStatus = queryPointStatusSpi.findByUserId(userId)
             ?: throw UserNotFoundException(UserNotFoundException.USER_ID_NOT_FOUND)
         when (getPointByPointId.type) {
             true -> {
                 val addGoodPoint = pointStatus.addGoodPoint(getPointByPointId.point)
-                pointStatusSpi.applyPointStatusChanges(addGoodPoint)
+                commandPointStatusSpi.applyPointStatusChanges(addGoodPoint)
             }
 
             false -> {
                 val addBadPoint = pointStatus.addBadPoint(getPointByPointId.point)
                 if (!addBadPoint.isPenaltyRequired && addBadPoint.badPoint >= PENALTY_LEVEL_LIST[addBadPoint.penaltyLevel]) {
                     val penaltyLevel = addBadPoint.penaltyEducationStart().penaltyLevelUp()
-                    pointStatusSpi.applyPointStatusChanges(penaltyLevel)
+                    commandPointStatusSpi.applyPointStatusChanges(penaltyLevel)
                 } else {
-                    pointStatusSpi.applyPointStatusChanges(addBadPoint)
+                    commandPointStatusSpi.applyPointStatusChanges(addBadPoint)
                 }
             }
         }
-        pointHistorySpi.saveUserPointHistory(userId, getPointByPointId.id)
-    }
-
-    override suspend fun saveUserPenaltyEducationComplete(userId: UUID) {
-        val userPointStatus = pointStatusSpi.findByUserId(userId)
-            ?: throw UserNotFoundException(UserNotFoundException.USER_ID_NOT_FOUND)
-
-        if (!userPointStatus.isPenaltyRequired) {
-            throw UserPenaltyExistException(UserPenaltyExistException.USER_PENALTY_EXIST)
-        }
-
-        val point = pointSpi.findAllByReason(POINT_REASON)
-
-        if (userPointStatus.penaltyLevel >= 4) {
-            val penaltyEducationComplete = applyOutPenaltyStatusChange(userPointStatus)
-            val penaltyStart = calculatePenaltyStart(penaltyEducationComplete)
-            pointStatusSpi.applyPointStatusChanges(penaltyStart)
-            pointHistorySpi.saveUserListPointHistory(userId, point)
-            return
-        }
-
-        val penaltyEducationComplete = applyPenaltyStatusChanges(userPointStatus)
-        val penaltyStart = calculatePenaltyStart(penaltyEducationComplete)
-
-        pointStatusSpi.applyPointStatusChanges(penaltyStart)
-        pointHistorySpi.saveUserListPointHistory(userId, point)
-    }
-
-    private fun calculatePenaltyStart(penaltyEducationComplete: PointStatus): PointStatus {
-        val penaltyLevelUp = penaltyEducationComplete.penaltyLevelUp()
-        return if (penaltyEducationComplete.badPoint >= PENALTY_LEVEL_LIST[penaltyEducationComplete.penaltyLevel]) {
-            penaltyLevelUp.penaltyEducationStart()
-        } else {
-            penaltyEducationComplete.penaltyEducationComplete()
-        }
-    }
-
-    private fun applyPenaltyStatusChanges(pointStatus: PointStatus): PointStatus {
-        val pointStatusMinusGoodPoint = pointStatus.penaltyEducationCompleteAndMinusGoodPoint()
-        val pointStatusMinusBadPoint = pointStatusMinusGoodPoint.penaltyEducationCompleteAndMinusBadPoint()
-        return pointStatusMinusBadPoint.penaltyEducationComplete()
-    }
-
-    private fun applyOutPenaltyStatusChange(pointStatus: PointStatus): PointStatus {
-        val pointStatusMinusBadPoint = pointStatus.penaltyEducationCompleteAndMinusBadPoint()
-        return pointStatusMinusBadPoint.penaltyEducationComplete()
+        commandPointHistorySpi.saveUserPointHistory(userId, getPointByPointId.id)
     }
 
     override suspend fun deleteUserPoint(studentId: UUID, historyId: UUID) {
-        val pointHistory = pointHistorySpi.findByIdAndStudentId(historyId, studentId)
+        val pointHistory = queryPointHistorySpi.findByIdAndStudentId(historyId, studentId)
             ?: throw PointHistoryNotFoundException(PointHistoryNotFoundException.POINT_HISTORY_NOT_FOUND)
 
-        val getPointByPointId = pointSpi.findByPointId(pointHistory.pointId)
+        val getPointByPointId = queryPointSpi.findByPointId(pointHistory.pointId)
             ?: throw PointNotFoundException(PointNotFoundException.POINT_NOT_FOUND)
 
-        val pointStatus = pointStatusSpi.findByUserId(pointHistory.userId)
+        val pointStatus = queryPointStatusSpi.findByUserId(pointHistory.userId)
             ?: throw UserNotFoundException(UserNotFoundException.USER_ID_NOT_FOUND)
 
         when (getPointByPointId.type) {
             true -> {
                 val minusGoodPoint = pointStatus.minusGoodPoint(getPointByPointId.point)
-                pointStatusSpi.applyPointStatusChanges(minusGoodPoint)
+                commandPointStatusSpi.applyPointStatusChanges(minusGoodPoint)
             }
 
             false -> {
                 val minusBadPoint = pointStatus.minusBadPoint(getPointByPointId.point)
-                pointStatusSpi.applyPointStatusChanges(minusBadPoint)
+                commandPointStatusSpi.applyPointStatusChanges(minusBadPoint)
             }
         }
 
-        pointHistorySpi.deleteByIdAndUserId(pointHistory)
+        commandPointHistorySpi.deleteByIdAndUserId(pointHistory)
     }
 
     override suspend fun queryUserPointHistory(userId: UUID, type: String): PointHistoryListResponse {
-        val pointHistory = pointHistorySpi.findAllByUserIdAndType(userId, convertType(type))
+        val pointHistory = queryPointHistorySpi.findAllByUserIdAndType(userId, convertType(type))
         return PointHistoryListResponse(pointHistory)
     }
 
     override suspend fun queryUserPointHistoryForStudent(userId: UUID, type: String): PointHistoryListStudentResponse {
-        val getUserPointStatus = pointStatusSpi.findByUserId(userId)
+        val getUserPointStatus = queryPointStatusSpi.findByUserId(userId)
             ?: throw UserNotFoundException(UserNotFoundException.USER_ID_NOT_FOUND)
 
-        val pointHistory = pointHistorySpi.findAllByUserIdAndType(getUserPointStatus.userId, convertType(type))
+        val pointHistory = queryPointHistorySpi.findAllByUserIdAndType(getUserPointStatus.userId, convertType(type))
 
         return PointHistoryListStudentResponse(
             goodPoint = getUserPointStatus.goodPoint,
@@ -153,21 +110,6 @@ class PointHistoryApiImpl(
             "BADPOINT" -> false
             else -> null
         }
-    }
-
-    override suspend fun savePointStatus(userId: UUID) {
-        pointStatusSpi.findByUserId(userId)?.run {
-            throw UserExistException(UserExistException.USER_ID_EXIST)
-        }
-
-        val pointStatus = PointStatus(
-            userId = userId,
-            goodPoint = 0,
-            badPoint = 0,
-            penaltyLevel = 1,
-            isPenaltyRequired = false,
-        )
-        pointStatusSpi.savePointStatus(pointStatus)
     }
 
     override suspend fun queryUserPointHistoryExcel(): ExportUserPointStatusResponse {

@@ -1,6 +1,8 @@
 package com.xquare.v1servicepoint.point.spi
 
 import com.xquare.v1servicepoint.point.exception.UserNotFoundException
+import com.xquare.v1servicepoint.point.spi.pointhistory.PointHistorySpi
+import com.xquare.v1servicepoint.point.spi.pointstatus.PointStatusSpi
 import org.apache.poi.ss.usermodel.CellStyle
 import org.apache.poi.ss.usermodel.IndexedColors
 import org.apache.poi.ss.usermodel.VerticalAlignment

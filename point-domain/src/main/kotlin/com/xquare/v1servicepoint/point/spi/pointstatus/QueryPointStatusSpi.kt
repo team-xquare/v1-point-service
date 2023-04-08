@@ -5,11 +5,8 @@ import com.xquare.v1servicepoint.point.PointStatus
 import java.util.UUID
 
 @Spi
-interface PointStatusRepositorySpi {
-
+interface QueryPointStatusSpi {
     suspend fun findByUserId(userId: UUID): PointStatus?
-    suspend fun applyPointStatusChanges(pointStatus: PointStatus): PointStatus
-    suspend fun savePointStatus(pointStatus: PointStatus)
     suspend fun findAll(): List<PointStatus>
     suspend fun findAllByPenaltyLevel(penaltyLevel: Int?): List<PointStatus>
 }

@@ -24,7 +24,7 @@ class PointStatusApiImpl(
     private val commandPointStatusSpi: CommandPointStatusSpi,
     private val commandPointHistorySpi: CommandPointHistorySpi,
     private val userSpi: UserSpi,
-    ) : PointStatusApi {
+) : PointStatusApi {
 
     override suspend fun saveUserPenaltyEducationComplete(userId: UUID) {
         val userPointStatus = queryPointStatusSpi.findByUserId(userId)
@@ -50,7 +50,6 @@ class PointStatusApiImpl(
         commandPointStatusSpi.applyPointStatusChanges(penaltyStart)
         commandPointHistorySpi.saveUserListPointHistory(userId, point)
     }
-
 
     private fun calculatePenaltyStart(penaltyEducationComplete: PointStatus): PointStatus {
         val penaltyLevelUp = penaltyEducationComplete.penaltyLevelUp()

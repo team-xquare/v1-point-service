@@ -7,5 +7,5 @@ import java.util.UUID
 @Spi
 interface UserSpi {
     suspend fun getUserInfo(userId: List<UUID>): List<UserInfoListElement>
-    suspend fun getStudent(): List<UserInfoListElement>
+    suspend fun getAllStudent(): List<UserInfoListElement>
 }

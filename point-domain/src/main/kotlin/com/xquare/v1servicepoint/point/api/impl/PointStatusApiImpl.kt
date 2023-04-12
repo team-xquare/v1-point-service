@@ -98,7 +98,7 @@ class PointStatusApiImpl(
 
     override suspend fun queryStudentStatus(name: String?, penaltyLevel: Int?): PointStudentStatusResponse {
         val pointStatusList = queryPointStatusSpi.findAllByPenaltyLevel(penaltyLevel)
-        val users = userSpi.getStudent()
+        val users = userSpi.getAllStudent()
         val students = users
             .filter {
                 name?.let { name -> it.name.contains(name) } ?: true

@@ -41,7 +41,7 @@ class UserSpiImpl(
             }
     }
 
-    override suspend fun getStudent(): List<UserResponse.UserInfoListElement> {
+    override suspend fun getAllStudent(): List<UserResponse.UserInfoListElement> {
         return webClient.get().uri {
             it.scheme(scheme)
                 .host(userHost)

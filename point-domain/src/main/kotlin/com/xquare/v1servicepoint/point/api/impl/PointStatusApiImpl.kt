@@ -26,6 +26,10 @@ class PointStatusApiImpl(
     private val userSpi: UserSpi,
 ) : PointStatusApi {
 
+    companion object {
+        val PENALTY_LEVEL_LIST = listOf(15, 20, 25, 35, 45)
+    }
+
     override suspend fun saveUserPenaltyEducationComplete(userId: UUID) {
         val userPointStatus = queryPointStatusSpi.findByUserId(userId)
             ?: throw UserNotFoundException(UserNotFoundException.USER_ID_NOT_FOUND)
@@ -53,7 +57,7 @@ class PointStatusApiImpl(
 
     private fun calculatePenaltyStart(penaltyEducationComplete: PointStatus): PointStatus {
         val penaltyLevelUp = penaltyEducationComplete.penaltyLevelUp()
-        return if (penaltyEducationComplete.badPoint >= PointHistoryApiImpl.PENALTY_LEVEL_LIST[penaltyEducationComplete.penaltyLevel]) {
+        return if (penaltyEducationComplete.badPoint >= PENALTY_LEVEL_LIST[penaltyEducationComplete.penaltyLevel]) {
             penaltyLevelUp.penaltyEducationStart()
         } else {
             penaltyEducationComplete.penaltyEducationComplete()
@@ -80,7 +84,7 @@ class PointStatusApiImpl(
             userId = userId,
             goodPoint = 0,
             badPoint = 0,
-            penaltyLevel = 1,
+            penaltyLevel = 0,
             isPenaltyRequired = false,
         )
         commandPointStatusSpi.savePointStatus(pointStatus)

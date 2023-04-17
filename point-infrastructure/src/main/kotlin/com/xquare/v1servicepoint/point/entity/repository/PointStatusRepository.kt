@@ -8,7 +8,7 @@ import com.linecorp.kotlinjdsl.singleQueryOrNull
 import com.xquare.v1servicepoint.point.PointStatus
 import com.xquare.v1servicepoint.point.entity.PointStatusEntity
 import com.xquare.v1servicepoint.point.mapper.PointStatusMapper
-import com.xquare.v1servicepoint.point.spi.PointStatusSpi
+import com.xquare.v1servicepoint.point.spi.pointstatus.PointStatusSpi
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import org.hibernate.reactive.mutiny.Mutiny
 import org.springframework.stereotype.Repository

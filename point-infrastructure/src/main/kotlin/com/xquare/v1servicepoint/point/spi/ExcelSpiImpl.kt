@@ -1,6 +1,8 @@
 package com.xquare.v1servicepoint.point.spi
 
 import com.xquare.v1servicepoint.point.exception.UserNotFoundException
+import com.xquare.v1servicepoint.point.spi.pointhistory.PointHistorySpi
+import com.xquare.v1servicepoint.point.spi.pointstatus.PointStatusSpi
 import org.apache.poi.ss.usermodel.CellStyle
 import org.apache.poi.ss.usermodel.IndexedColors
 import org.apache.poi.ss.usermodel.VerticalAlignment
@@ -20,7 +22,7 @@ class ExcelSpiImpl(
     override suspend fun writeUserPointHistoryExcelFile(): ByteArray {
         val attributes = listOf("학번", "이름", "상점", "벌점", "상점내역", "벌점내역", "교육 단계", "교육 필요 여부")
         val pointStatus = pointStatusSpi.findAll()
-        val userPointStatus = userSpi.getStudent()
+        val userPointStatus = userSpi.getAllStudent()
         val goodPointHistories = pointHistorySpi.findAllByType(true)
         val badPointHistories = pointHistorySpi.findAllByType(false)
         val userData: List<List<String>> = userPointStatus.map { user ->

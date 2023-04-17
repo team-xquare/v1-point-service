@@ -3,6 +3,7 @@ package com.xquare.v1servicepoint.point.router
 import com.xquare.v1servicepoint.configuration.exception.UnAuthorizedException
 import com.xquare.v1servicepoint.point.api.PointApi
 import com.xquare.v1servicepoint.point.api.PointHistoryApi
+import com.xquare.v1servicepoint.point.api.PointStatusApi
 import com.xquare.v1servicepoint.point.api.dto.request.DomainGivePointUserRequest
 import com.xquare.v1servicepoint.point.api.dto.request.DomainSavePointRoleRequest
 import com.xquare.v1servicepoint.point.api.dto.request.DomainUpdatePointRoleRequest
@@ -27,12 +28,13 @@ import java.util.UUID
 class PointHandler(
     private val pointApi: PointApi,
     private val pointHistoryApi: PointHistoryApi,
+    private val pointStatusApi: PointStatusApi,
     private val userSpi: UserSpi,
 ) {
     suspend fun queryUserPointStatus(serverRequest: ServerRequest): ServerResponse {
         val userId = serverRequest.pathVariable("student-id")
 
-        val pointStatus = pointApi.queryPointStatus(UUID.fromString(userId))
+        val pointStatus = pointStatusApi.queryUserPointStatus(UUID.fromString(userId))
         return ServerResponse.ok().bodyValueAndAwait(pointStatus)
     }
 
@@ -130,7 +132,7 @@ class PointHandler(
     suspend fun savePointStatus(serverRequest: ServerRequest): ServerResponse {
         val userId = serverRequest.pathVariable("student-id")
 
-        pointHistoryApi.savePointStatus(UUID.fromString(userId))
+        pointStatusApi.savePointStatus(UUID.fromString(userId))
         return ServerResponse.created(URI("/")).buildAndAwait()
     }
 
@@ -145,7 +147,7 @@ class PointHandler(
     suspend fun saveUserPenaltyEducationComplete(serverRequest: ServerRequest): ServerResponse {
         val userId = serverRequest.pathVariable("student-id")
 
-        pointHistoryApi.saveUserPenaltyEducationComplete(UUID.fromString(userId))
+        pointStatusApi.saveUserPenaltyEducationComplete(UUID.fromString(userId))
         return ServerResponse.noContent().buildAndAwait()
     }
 
@@ -153,7 +155,7 @@ class PointHandler(
         val name = serverRequest.queryParams().getFirst("name")
         val penaltyLevel = serverRequest.queryParams().getFirst("penaltyLevel")?.toIntOrNull()
 
-        val pointStatus = pointApi.queryStudentStatus(name, penaltyLevel)
+        val pointStatus = pointStatusApi.queryStudentStatus(name, penaltyLevel)
         return ServerResponse.ok().bodyValueAndAwait(pointStatus)
     }
 }

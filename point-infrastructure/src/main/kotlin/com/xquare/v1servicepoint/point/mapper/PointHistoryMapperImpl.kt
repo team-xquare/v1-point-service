@@ -3,7 +3,7 @@ package com.xquare.v1servicepoint.point.mapper
 import com.xquare.v1servicepoint.point.PointHistory
 import com.xquare.v1servicepoint.point.entity.PointHistoryEntity
 import com.xquare.v1servicepoint.point.exception.PointNotFoundException
-import com.xquare.v1servicepoint.point.spi.PointSpi
+import com.xquare.v1servicepoint.point.spi.point.PointSpi
 import org.springframework.stereotype.Component
 
 @Component

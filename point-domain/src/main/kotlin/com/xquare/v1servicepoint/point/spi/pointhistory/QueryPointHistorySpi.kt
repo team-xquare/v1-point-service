@@ -1,18 +1,13 @@
-package com.xquare.v1servicepoint.point.spi
+package com.xquare.v1servicepoint.point.spi.pointhistory
 
 import com.xquare.v1servicepoint.annotation.Spi
-import com.xquare.v1servicepoint.point.Point
 import com.xquare.v1servicepoint.point.PointHistory
 import com.xquare.v1servicepoint.point.api.dto.response.PointHistoryElement
 import com.xquare.v1servicepoint.point.api.dto.response.PointHistoryExcelElement
 import java.util.UUID
 
 @Spi
-interface PointHistoryRepositorySpi {
-    suspend fun saveUserPointHistory(userId: UUID, pointId: UUID)
-
-    suspend fun saveUserListPointHistory(userId: UUID, pointIds: List<Point>)
-
+interface QueryPointHistorySpi {
     suspend fun findByIdAndStudentId(id: UUID, studentId: UUID): PointHistory?
 
     suspend fun deleteByIdAndUserId(pointHistory: PointHistory)

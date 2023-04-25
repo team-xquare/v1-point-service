@@ -20,7 +20,10 @@ class NotificationSpiImpl(
 
     override suspend fun sendNotification(userId: UUID, topic: String, content: String, threadId: String) {
         val domainSendMessageRequest = DomainSendMessageRequest(
-            userId, topic, content, threadId,
+            userId = userId,
+            topic = topic,
+            content = content,
+            threadId = threadId,
         )
 
         val sendMessageRequest = SendMessageRequest(

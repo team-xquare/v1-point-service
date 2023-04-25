@@ -11,7 +11,7 @@ data class Point(
 
     val point: Int,
 
-    val type: Boolean,
+    val type: Boolean, //TODO 컬럼 이름 바꾸기
 ) {
     fun updatePointRole(reason: String, point: Int, type: Boolean): Point {
         return copy(

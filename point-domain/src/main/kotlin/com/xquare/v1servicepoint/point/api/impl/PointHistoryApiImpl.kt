@@ -39,40 +39,41 @@ class PointHistoryApiImpl(
     }
 
     override suspend fun saveUserPoint(userId: UUID, givePointUserRequest: DomainGivePointUserRequest) {
-        val getPointByPointId: Point = queryPointSpi.findByPointId(givePointUserRequest.pointId)
+        val point: Point = queryPointSpi.findByPointId(givePointUserRequest.pointId)
             ?: throw PointNotFoundException(PointNotFoundException.POINT_NOT_FOUND)
 
         val pointStatus: PointStatus = queryPointStatusSpi.findByUserId(userId)
             ?: throw UserNotFoundException(UserNotFoundException.USER_ID_NOT_FOUND)
-        when (getPointByPointId.type) {
+
+        when (point.type) {
             true -> {
-                val addGoodPoint = pointStatus.addGoodPoint(getPointByPointId.point)
+                val addGoodPoint = pointStatus.addGoodPoint(point.point)
                 commandPointStatusSpi.applyPointStatusChanges(addGoodPoint)
 
-                sendNotification(userId, true, getPointByPointId.reason, getPointByPointId.point)
+                sendNotification(userId, true, point.reason, point.point)
             }
 
             false -> {
-                val addBadPoint = pointStatus.addBadPoint(getPointByPointId.point)
+                val addBadPoint = pointStatus.addBadPoint(point.point)
                 if (!addBadPoint.isPenaltyRequired && addBadPoint.badPoint >= PENALTY_LEVEL_LIST[addBadPoint.penaltyLevel]) {
                     val penaltyLevel = addBadPoint.penaltyEducationStart().penaltyLevelUp()
                     commandPointStatusSpi.applyPointStatusChanges(penaltyLevel)
 
-                    sendNotification(userId, false, getPointByPointId.reason, getPointByPointId.point)
+                    sendNotification(userId, false, point.reason, point.point)
                     sendPenaltyNotification(userId, addBadPoint.badPoint, penaltyLevel.penaltyLevel)
                 } else {
                     commandPointStatusSpi.applyPointStatusChanges(addBadPoint)
 
-                    sendNotification(userId, false, getPointByPointId.reason, getPointByPointId.point)
+                    sendNotification(userId, false, point.reason, point.point)
                 }
             }
         }
-        commandPointHistorySpi.saveUserPointHistory(userId, getPointByPointId.id)
+        commandPointHistorySpi.saveUserPointHistory(userId, point.id)
     }
 
-    private suspend fun sendNotification(userId: UUID, type: Boolean, reason: String, point: Int) {
+    private suspend fun sendNotification(userId: UUID, isGoodPoint: Boolean, reason: String, point: Int) {
         val notificationMessage = "${reason}으로 인해 ${point}점을 받았어요."
-        val topic = if (type) "ALL_GOOD_POINT" else "ALL_BAD_POINT"
+        val topic = if (isGoodPoint) "ALL_GOOD_POINT" else "ALL_BAD_POINT"
         val threadId = "ALL_POINT"
 
         notificationSpi.sendNotification(userId, topic, notificationMessage, threadId)

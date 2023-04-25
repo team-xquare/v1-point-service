@@ -53,4 +53,7 @@ object Dependencies {
     // excel
     const val APACHE_POI = "org.apache.poi:poi:${DependencyVersions.APACHE_POI_VERSION}"
     const val APACHE_POI_OOXML = "org.apache.poi:poi-ooxml:${DependencyVersions.APACHE_POI_VERSION}"
+
+    // aws
+    const val AWS_MESSAGING = "org.springframework.cloud:spring-cloud-starter-aws-messaging:${DependencyVersions.AWS_MESSAGING}"
 }

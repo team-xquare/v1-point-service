@@ -11,4 +11,5 @@ object DependencyVersions {
     const val JDSL_VERSION = "2.0.1.RELEASE"
     const val UUID_V7_VERSION = "5.2.0"
     const val APACHE_POI_VERSION = "3.7"
+    const val AWS_MESSAGING = "2.2.6.RELEASE"
 }

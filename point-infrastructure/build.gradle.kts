@@ -29,6 +29,7 @@ dependencies {
     implementation(Dependencies.REACTIVE_REDIS)
     implementation(Dependencies.APACHE_POI)
     implementation(Dependencies.APACHE_POI_OOXML)
+    implementation(Dependencies.AWS_MESSAGING)
 
     implementation(project(":point-domain"))
 }

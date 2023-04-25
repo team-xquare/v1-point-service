@@ -12,6 +12,7 @@ import com.xquare.v1servicepoint.point.exception.PointHistoryNotFoundException
 import com.xquare.v1servicepoint.point.exception.PointNotFoundException
 import com.xquare.v1servicepoint.point.exception.UserNotFoundException
 import com.xquare.v1servicepoint.point.spi.ExcelSpi
+import com.xquare.v1servicepoint.point.spi.NotificationSpi
 import com.xquare.v1servicepoint.point.spi.point.QueryPointSpi
 import com.xquare.v1servicepoint.point.spi.pointhistory.CommandPointHistorySpi
 import com.xquare.v1servicepoint.point.spi.pointhistory.QueryPointHistorySpi
@@ -29,6 +30,7 @@ class PointHistoryApiImpl(
     private val queryPointHistorySpi: QueryPointHistorySpi,
     private val commandPointHistorySpi: CommandPointHistorySpi,
     private val excelSpi: ExcelSpi,
+    private val notificationSpi: NotificationSpi,
 ) : PointHistoryApi {
 
     companion object {
@@ -46,6 +48,8 @@ class PointHistoryApiImpl(
             true -> {
                 val addGoodPoint = pointStatus.addGoodPoint(getPointByPointId.point)
                 commandPointStatusSpi.applyPointStatusChanges(addGoodPoint)
+
+                sendNotification(userId, true, getPointByPointId.reason, getPointByPointId.point)
             }
 
             false -> {
@@ -53,12 +57,33 @@ class PointHistoryApiImpl(
                 if (!addBadPoint.isPenaltyRequired && addBadPoint.badPoint >= PENALTY_LEVEL_LIST[addBadPoint.penaltyLevel]) {
                     val penaltyLevel = addBadPoint.penaltyEducationStart().penaltyLevelUp()
                     commandPointStatusSpi.applyPointStatusChanges(penaltyLevel)
+
+                    sendNotification(userId, true, getPointByPointId.reason, getPointByPointId.point)
+                    sendPenaltyNotification(userId, addBadPoint.badPoint, penaltyLevel.penaltyLevel)
                 } else {
                     commandPointStatusSpi.applyPointStatusChanges(addBadPoint)
+
+                    sendNotification(userId, false, getPointByPointId.reason, getPointByPointId.point)
                 }
             }
         }
         commandPointHistorySpi.saveUserPointHistory(userId, getPointByPointId.id)
+    }
+
+    private suspend fun sendNotification(userId: UUID, type: Boolean, reason: String, point: Int) {
+        val notificationMessage = "${reason}으로 인해 ${point}점을 받았어요."
+        val topic = if (type) "ALL_GOOD_POINT" else "ALL_BAD_POINT"
+        val threadId = "ALL_POINT"
+
+        notificationSpi.sendNotification(userId, topic, notificationMessage, threadId)
+    }
+
+    private suspend fun sendPenaltyNotification(userId: UUID, point: Int, penaltyLevel: Int) {
+        val penaltyNotificationMessage = "${point}점이 되어 ${penaltyLevel}차 봉사 대상이 되었어요."
+        val topic = "ALL_PENALTY_LEVEL"
+        val threadId = "ALL_POINT"
+
+        notificationSpi.sendNotification(userId, topic, penaltyNotificationMessage, threadId)
     }
 
     override suspend fun deleteUserPoint(studentId: UUID, historyId: UUID) {

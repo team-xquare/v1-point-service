@@ -58,7 +58,7 @@ class PointHistoryApiImpl(
                     val penaltyLevel = addBadPoint.penaltyEducationStart().penaltyLevelUp()
                     commandPointStatusSpi.applyPointStatusChanges(penaltyLevel)
 
-                    sendNotification(userId, true, getPointByPointId.reason, getPointByPointId.point)
+                    sendNotification(userId, false, getPointByPointId.reason, getPointByPointId.point)
                     sendPenaltyNotification(userId, addBadPoint.badPoint, penaltyLevel.penaltyLevel)
                 } else {
                     commandPointStatusSpi.applyPointStatusChanges(addBadPoint)

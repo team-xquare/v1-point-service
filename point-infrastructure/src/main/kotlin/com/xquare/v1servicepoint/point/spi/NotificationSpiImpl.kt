@@ -6,8 +6,7 @@ import com.amazonaws.services.sqs.model.SendMessageRequest
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.xquare.v1servicepoint.point.api.dto.request.DomainSendMessageRequest
 import org.springframework.stereotype.Component
-import java.util.*
-
+import java.util.UUID
 
 @Component
 class NotificationSpiImpl(
@@ -21,7 +20,7 @@ class NotificationSpiImpl(
 
     override suspend fun sendNotification(userId: UUID, topic: String, content: String, threadId: String) {
         val domainSendMessageRequest = DomainSendMessageRequest(
-            userId, topic, content, threadId
+            userId, topic, content, threadId,
         )
 
         val sendMessageRequest = SendMessageRequest(
@@ -35,7 +34,7 @@ class NotificationSpiImpl(
                     "Content-Type" to MessageAttributeValue()
                         .withDataType("String")
                         .withStringValue("application/json")
-                )
+                ),
             )
         amazonSQS.sendMessage(sendMessageRequest)
     }

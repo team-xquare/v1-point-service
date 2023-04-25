@@ -10,7 +10,6 @@ import com.xquare.v1servicepoint.point.api.dto.request.DomainUpdatePointRoleRequ
 import com.xquare.v1servicepoint.point.router.dto.SavePointRoleRequest
 import com.xquare.v1servicepoint.point.router.dto.SaveUserPointRequest
 import com.xquare.v1servicepoint.point.router.dto.UpdatePointRoleRequest
-import com.xquare.v1servicepoint.point.spi.UserSpi
 import kotlinx.coroutines.reactor.awaitSingle
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.http.HttpHeaders
@@ -29,7 +28,6 @@ class PointHandler(
     private val pointApi: PointApi,
     private val pointHistoryApi: PointHistoryApi,
     private val pointStatusApi: PointStatusApi,
-    private val userSpi: UserSpi,
 ) {
     suspend fun queryUserPointStatus(serverRequest: ServerRequest): ServerResponse {
         val userId = serverRequest.pathVariable("student-id")

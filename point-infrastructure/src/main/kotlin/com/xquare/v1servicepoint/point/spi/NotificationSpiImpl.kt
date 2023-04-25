@@ -36,7 +36,7 @@ class NotificationSpiImpl(
                 mapOf(
                     "Content-Type" to MessageAttributeValue()
                         .withDataType("String")
-                        .withStringValue("application/json")
+                        .withStringValue("application/json"),
                 ),
             )
         amazonSQS.sendMessage(sendMessageRequest)

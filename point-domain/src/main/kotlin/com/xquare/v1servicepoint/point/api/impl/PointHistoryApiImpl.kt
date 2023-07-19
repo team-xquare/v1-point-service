@@ -138,13 +138,14 @@ class PointHistoryApiImpl(
         }
     }
 
-    private fun convertPostPosition(reason: String): String {
+    private fun convertPostfix(reason: String): String {
         val lastSpell = reason.last()
-        return if ((lastSpell.code - 0xAC00) % 28 > 0 && (lastSpell.code - 0xAC00) % 28 != 8) {
-            reason + "으로"
+        val postfix = if ((lastSpell.code - 0xAC00) % 28 > 0 && (lastSpell.code - 0xAC00) % 28 != 8) {
+            "으로"
         } else {
-            reason + "로"
+            "로"
         }
+        return reason + postfix
     }
 
     override suspend fun queryUserPointHistoryExcel(): ExportUserPointStatusResponse {

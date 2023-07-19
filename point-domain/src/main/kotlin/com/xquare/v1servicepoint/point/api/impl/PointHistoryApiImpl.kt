@@ -72,7 +72,7 @@ class PointHistoryApiImpl(
     }
 
     private suspend fun sendNotification(userId: UUID, isGoodPoint: Boolean, reason: String, point: Int) {
-        val notificationMessage = "${reason}으로 인해 ${point}점을 받았어요."
+        val notificationMessage = convertPostPosition(reason) + " 인해 ${point}점을 받았습니다."
         val topic = if (isGoodPoint) "ALL_GOOD_POINT" else "ALL_BAD_POINT"
         val threadId = "ALL_POINT"
 
@@ -136,6 +136,14 @@ class PointHistoryApiImpl(
             "BADPOINT" -> false
             else -> null
         }
+    }
+
+    private fun convertPostPosition(reason: String): String {
+        val lastSpell = reason.last()
+        val reason = if ((lastSpell.code - 0xAC00) % 28 > 0 && (lastSpell.code - 0xAC00) % 28  != 8) {
+            reason + "으로"
+        } else reason + "로"
+        return reason
     }
 
     override suspend fun queryUserPointHistoryExcel(): ExportUserPointStatusResponse {

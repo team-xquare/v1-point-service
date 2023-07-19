@@ -140,8 +140,8 @@ class PointHistoryApiImpl(
 
     private fun convertPostfix(reason: String): String {
         val lastSpell = reason.last()
-        val isPostfix =((lastSpell.code - 0xAC00) % 28 > 0 && (lastSpell.code - 0xAC00) % 28 != 8)
-        val postfix = if(isPostfix) "으로" else "로"
+        val isPostfix = ((lastSpell.code - 0xAC00) % 28 > 0 && (lastSpell.code - 0xAC00) % 28 != 8)
+        val postfix = if (isPostfix) "으로" else "로"
         return reason + postfix
     }
 

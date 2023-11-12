@@ -27,7 +27,7 @@ class PointStatusApiImpl(
 ) : PointStatusApi {
 
     companion object {
-        val PENALTY_LEVEL_LIST = listOf(15, 20, 25, 35, 45)
+        val PENALTY_LEVEL_LIST = listOf(15, 20, 25, 35, 45, 60)
     }
 
     override suspend fun saveUserPenaltyEducationComplete(userId: UUID) {

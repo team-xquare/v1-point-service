@@ -35,7 +35,7 @@ class PointHistoryApiImpl(
 
     companion object {
         const val POINT_REASON = "다벌점 교육 완료"
-        val PENALTY_LEVEL_LIST = listOf(15, 20, 25, 35, 45)
+        val PENALTY_LEVEL_LIST = listOf(15, 20, 25, 35, 45, 60)
     }
 
     override suspend fun saveUserPoint(userId: UUID, givePointUserRequest: DomainGivePointUserRequest) {
